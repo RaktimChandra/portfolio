@@ -32,7 +32,9 @@ export default function Terminal() {
   const [hi, setHi] = useState(-1);
   const end = useRef<HTMLDivElement>(null);
 
-  useEffect(() => end.current?.scrollIntoView({ block: "end" }), [lines]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ block: "end" });
+  }, [lines]);
 
   const print = (text: string, kind: Line["kind"] = "out") => setLines((l) => [...l, { kind, text }]);
 

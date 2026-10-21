@@ -116,7 +116,7 @@ export function getIndex() {
   return index;
 }
 
-const STOP = new Set("a an the is are was were what which who whom has have had did does do of in on at to for with and or by from about tell me raktim raktim's his he him please can you your built build made make any some".split(" "));
+const STOP = new Set("a an the is are was were what which who whom has have had did does do of in on at to for with and or by from about tell me raktim raktim's his he him please can you your built build made make any some projects project use used using uses work worked working know show list does him".split(" "));
 
 export function retrieve(q: string, k = 5) {
   const { ms, docs } = getIndex();
@@ -138,7 +138,7 @@ export function extractive(q: string, hits: Doc[]) {
   const sentences = top.text.split(/(?<=[.!?])\s+/);
   const best = sentences.map((s, i) => ({ s, i, n: score(s) + (i === 0 ? 0.5 : 0) })).sort((a, b) => b.n - a.n).slice(0, 3).sort((a, b) => a.i - b.i).map((x) => x.s);
   out.push(best.join(" "));
-  const others = hits.slice(1, 4).filter((h) => h.kind === top.kind || score(h.text) > 0);
+  const others = terms.length ? hits.slice(1, 4).filter((h) => score(`${h.title} ${h.text}`) > 0) : [];
   if (others.length) out.push(`Also relevant: ${others.map((h) => h.title).join(", ")}.`);
   return out.join("\n\n");
 }

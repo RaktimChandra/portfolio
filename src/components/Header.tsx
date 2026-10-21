@@ -27,7 +27,9 @@ export default function Header() {
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => setMenu(false), [pathname]);
+  useEffect(() => {
+    setMenu(false);
+  }, [pathname]);
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
     on();

@@ -344,3 +344,14 @@
 }
 [data-reality="retrodesktop"] .btn:active { border-style: inset; }
 [data-reality="retrodesktop"] main .section > .wrap { background: #c0c0c0; border: 2px outset #fff; padding-block: 1.5rem; }
+
+/* Loud realities: put the hero copy on a solid card so it always reads. */
+:is([data-reality="opart"], [data-reality="datamosh"], [data-reality="psychedelic"], [data-reality="teletext"], [data-reality="dither1bit"], [data-reality="memphis"]) :is(.hero__body, .hero__top) {
+  background: var(--bg);
+  width: fit-content;
+  max-width: calc(100% - 2 * var(--margin));
+  margin-inline: var(--margin);
+  padding: 1.25rem;
+  border-radius: var(--radius);
+}
+:is([data-reality="opart"], [data-reality="datamosh"], [data-reality="psychedelic"], [data-reality="teletext"], [data-reality="dither1bit"], [data-reality="memphis"]) .hero__top { margin-top: 0.75rem; gap: 1.5rem; }
