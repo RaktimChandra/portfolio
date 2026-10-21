@@ -129,7 +129,9 @@
     "skills": "Skills",
     "journey": "Journey (3D)",
     "interview": "Interview mode",
-    "blog": "Blog"
+    "blog": "Blog",
+    "guestbook": "Guest book",
+    "forCompany": "For your company"
   },
   "notFound": {
     "title": "Missed.",

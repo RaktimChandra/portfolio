@@ -129,7 +129,9 @@
     "skills": "দক্ষতা",
     "journey": "যাত্রা (3D)",
     "interview": "ইন্টারভিউ মোড",
-    "blog": "ব্লগ"
+    "blog": "ব্লগ",
+    "guestbook": "অতিথি খাতা",
+    "forCompany": "আপনার কোম্পানির জন্য"
   },
   "notFound": {
     "title": "মিস।",

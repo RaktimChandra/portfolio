@@ -36,7 +36,7 @@ export default async function ForCompany({ params, searchParams }: P) {
       <header className="page-head">
         <p className="crumbs tabular">For {domain}</p>
         <h1 className="page-title display">Hello, {name}.</h1>
-        <p className="page-lede">I&apos;m {profile.name}, an {profile.role.replace(" engineer", "")} engineer from SRM, Chennai, graduating 2027. Here is what I&apos;ve built that lines up with what you do.</p>
+        <p className="page-lede">I&apos;m {profile.name}, an {profile.role} from SRM, Chennai, graduating 2027. Here is what I&apos;ve built that lines up with what you do.</p>
       </header>
 
       {c?.about && (

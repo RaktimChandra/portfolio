@@ -24,5 +24,7 @@ export const MORE = [
   { href: "/uses", key: "uses" },
   { href: "/lab", key: "lab" },
   { href: "/status", key: "status" },
+  { href: "/guestbook", key: "guestbook" },
+  { href: "/for", key: "forCompany" },
   { href: "/contact", key: "contact" },
 ] as const;

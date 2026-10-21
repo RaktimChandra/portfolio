@@ -129,7 +129,9 @@
     "skills": "कौशल",
     "journey": "सफ़र (3D)",
     "interview": "इंटरव्यू मोड",
-    "blog": "ब्लॉग"
+    "blog": "ब्लॉग",
+    "guestbook": "अतिथि पुस्तिका",
+    "forCompany": "आपकी कंपनी के लिए"
   },
   "notFound": {
     "title": "चूक गए।",

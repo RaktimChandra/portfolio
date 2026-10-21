@@ -20,7 +20,7 @@ export default async function Research({ params }: LP) {
             const href = links.ieee[p.key];
             return (
               <tr key={p.key} data-reveal>
-                <th scope="row">{href ? <a href={href} className="link-u" target="_blank" rel="noopener">{p.title} ↗</a> : p.title}</th>
+                <th scope="row"><Link href={`/research/${p.key.toLowerCase()}`} className="link-u">{p.title}</Link>{href && <> · <a href={href} className="link-u text-small" target="_blank" rel="noopener">IEEE ↗</a></>}</th>
                 <td className="muted">{p.venue} · {p.area}</td>
                 <td className="tabular muted">{p.year}</td>
               </tr>

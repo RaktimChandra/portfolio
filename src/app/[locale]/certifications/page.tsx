@@ -1,4 +1,5 @@
 import PageHead from "@/components/PageHead";
+import CertWall from "@/components/CertWall";
 import { certifications, links } from "@/content/record";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
 
@@ -14,6 +15,8 @@ export default async function Certifications({ params }: LP) {
   return (
     <div className="page wrap">
       <PageHead title="Certifications" lede={`${certifications.length} completed, across cloud, AI, data, development and security.`} />
+      <CertWall />
+      <h2 className="sec-title display" style={{ marginTop: "3rem" }}>The list</h2>
       {groups.map((g) => (
         <section key={g} className="section" style={{ paddingBlock: "1.5rem" }}>
           <h2 className="text-lead" style={{ fontWeight: 650, marginBottom: "1rem" }}>{g}</h2>

@@ -621,3 +621,27 @@ main { overflow-x: clip; }
 .proposal h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
 .proposal ul, .proposal ol { padding-left: 1.2rem; display: grid; gap: 0.3rem; }
 .proposal__head { border-bottom: 2px solid currentColor; padding-bottom: 0.8rem; }
+.bib { padding: 1rem; border-radius: var(--radius); background: #0d1117; color: #e6edf3; font: 13px/1.6 ui-monospace, Menlo, monospace; overflow-x: auto; white-space: pre; }
+.certwall { display: grid; gap: 1rem; position: relative; }
+.certwall__stage { perspective: 1400px; padding: 1.8rem 1.4rem; border-radius: var(--radius); background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--ink) 4%, transparent) 0 2px, transparent 2px 120px), color-mix(in oklab, var(--ink) 5%, var(--bg)); overflow: hidden; }
+.certwall__wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(46%, 150px), 1fr)); gap: 1.6rem 1.1rem; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transform-style: preserve-3d; transition: transform 300ms var(--ease-out, ease-out); }
+.frame { position: relative; padding: 9px; border: 0; border-radius: 4px; background: linear-gradient(135deg, #8a6a4a, #4a3424 55%, #7a5a3a); box-shadow: 0 14px 24px -12px rgb(0 0 0 / 0.55); rotate: var(--tilt); cursor: pointer; transform: translateZ(18px); transition: rotate 300ms, translate 300ms, opacity 300ms, filter 300ms; font: inherit; color: #222; }
+.frame::before { content: ""; position: absolute; top: -14px; left: 50%; width: 1px; height: 14px; background: color-mix(in oklab, var(--ink) 40%, transparent); }
+.frame:hover, .frame:focus-visible { rotate: 0deg; translate: 0 -4px; }
+.frame[data-dim] { opacity: 0.18; filter: grayscale(1); }
+.frame__paper { display: grid; gap: 0.3rem; justify-items: center; align-content: center; min-height: 118px; padding: 0.6rem; background: #fbf8f1; border: 1px solid #d9cfb8; text-align: center; }
+.frame__seal { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 800; color: #fff; background: hsl(var(--h) 55% 42%); box-shadow: 0 0 0 3px hsl(var(--h) 55% 80%); }
+.frame__name { font-size: 11.5px; font-weight: 650; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.frame__iss { font-size: 10px; color: #6b6255; }
+.certwall__open { position: sticky; bottom: 1rem; display: grid; gap: 0.5rem; justify-items: start; padding: 1.2rem; max-width: 520px; z-index: 3; }
+@media (prefers-reduced-motion: reduce) { .certwall__wall { transform: none; } .frame { rotate: 0deg; } }
+.gb { display: grid; gap: 2rem; }
+@media (min-width: 900px) { .gb { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: start; } }
+.gb__form { display: grid; gap: 0.8rem; padding: 1.3rem; }
+.gb__form label { display: grid; gap: 0.3rem; font-size: var(--step-small); color: var(--muted); }
+.gb__row { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+.gb__hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.gb__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
+.gb__note { padding: 1rem 1.2rem; border-radius: var(--radius); background: var(--panel-bg); border: var(--panel-border); }
+.gb__note p { margin: 0; overflow-wrap: anywhere; }
+.gb__note p + p { margin-top: 0.4rem; }
