@@ -2,11 +2,10 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { profile } from "@/content/profile";
 
-const HoloPortrait = dynamic(() => import("@/three/HoloPortrait"), { ssr: false });
+const Room = dynamic(() => import("@/three/Room"), { ssr: false });
 
-/** Static portrait card first (fast, no JS needed), upgraded to the 3D holo card when the browser can. */
+/** The 3D desk. Before WebGL loads (or with reduced motion) a plain list of the same doors. */
 export default function HeroPortrait() {
   const [three, setThree] = useState(false);
   useEffect(() => {
@@ -18,18 +17,17 @@ export default function HeroPortrait() {
     if (!gl) return;
     const go = () => setThree(true);
     const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-    if (idle) idle(go, { timeout: 1800 });
-    else setTimeout(go, 600);
+    if (idle) idle(go, { timeout: 1500 });
+    else setTimeout(go, 500);
   }, []);
   return (
     <div className="hero__portrait">
       {three ? (
-        <HoloPortrait />
+        <Room />
       ) : (
-        <figure className="portrait-static">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={profile.avatar} alt={`Portrait of ${profile.name}`} width={400} height={400} fetchPriority="high" decoding="async" />
-        </figure>
+        <div className="room room--static" aria-hidden="true">
+          <p className="room__poster">SHAME ON ME,<br />IF I DIE<br />AVERAGE.</p>
+        </div>
       )}
     </div>
   );

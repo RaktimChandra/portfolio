@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { hydrateUI, useUI } from "@/lib/store";
 import { initAnalytics, track } from "@/lib/analytics";
+import { measureDisplayWidth } from "@/lib/fit";
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
@@ -13,6 +14,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   // Sync store with what the boot script applied; register the service worker.
   useEffect(() => {
     hydrateUI();
+    measureDisplayWidth();
+    document.fonts?.ready.then(measureDisplayWidth);
+    const onReality = () => requestAnimationFrame(() => {
+      measureDisplayWidth();
+      document.fonts?.ready.then(measureDisplayWidth);
+    });
+    window.addEventListener("reality:change", onReality);
+    document.fonts?.addEventListener?.("loadingdone", measureDisplayWidth);
     const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
     if (idle) idle(initAnalytics, { timeout: 4000 });
     else setTimeout(initAnalytics, 2500);
@@ -32,7 +41,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
-    return () => document.removeEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("reality:change", onReality);
+    };
   }, []);
 
   // Smooth scrolling (skipped for reduced motion and touch, where native is better).
