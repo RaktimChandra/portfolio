@@ -17,7 +17,7 @@ export function initAnalytics() {
   import("posthog-js").then(({ default: posthog }) => {
     posthog.init(POSTHOG_KEY, {
       api_host: "/ingest",
-      ui_host: "https://us.posthog.com",
+      ui_host: "https://eu.posthog.com",
       person_profiles: "identified_only",
       capture_pageview: "history_change",
       capture_pageleave: true,
