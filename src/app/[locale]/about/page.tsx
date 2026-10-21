@@ -1,4 +1,5 @@
 import PageHead from "@/components/PageHead";
+import GlobeLazy from "@/components/GlobeLazy";
 import Avatar from "@/components/Avatar";
 import { profile } from "@/content/profile";
 import { Link } from "@/i18n/navigation";
@@ -35,6 +36,7 @@ export default async function About({ params }: LP) {
             <p>Most of what I build sits where AI meets real constraints: no internet in a rural clinic, a hangar with no bandwidth, a fraud desk that must explain itself to a regulator. I like problems where the model is a part of the system, not the whole of it, and where the result has to be measured rather than demoed.</p>
             <p>Alongside college I&apos;ve held {profile.numbers.internships} internships and program roles, run a freelance practice with {profile.numbers.clients} clients, published {profile.numbers.papers} IEEE papers and led team VORTEXXX through {profile.numbers.hackathons} hackathons.</p>
             <p>Interests: {profile.roles.join(", ")}.</p>
+            <GlobeLazy />
             <h2>How I work</h2>
             <ul>{profile.principles.map((p) => <li key={p.title}><b>{p.title}.</b> {p.body}</li>)}</ul>
             <h2>Outside work</h2>

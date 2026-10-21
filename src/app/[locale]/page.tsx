@@ -7,6 +7,7 @@ import ContactField from "@/components/ContactField";
 import AgentPipelineLazy from "@/components/AgentPipelineLazy";
 import GitHubPulse from "@/components/GitHubPulse";
 import Endorsements from "@/components/Endorsements";
+import ParticleSection from "@/components/ParticleSection";
 import { profile } from "@/content/profile";
 import { experience, freelance } from "@/content/experience";
 import { featured } from "@/content/projects";
@@ -45,6 +46,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           ))}
         </dl>
       </section>
+
+      <ParticleSection />
 
       {/* Work */}
       <section className="section wrap" aria-labelledby="work-h">

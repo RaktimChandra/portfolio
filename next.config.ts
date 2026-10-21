@@ -33,6 +33,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },
+      { source: "/card.usdz", headers: [{ key: "Content-Type", value: "model/vnd.usdz+zip" }] },
+      { source: "/card.glb", headers: [{ key: "Content-Type", value: "model/gltf-binary" }, { key: "Access-Control-Allow-Origin", value: "*" }] },
       {
         source: "/fonts/(.*)",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],

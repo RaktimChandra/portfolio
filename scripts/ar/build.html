@@ -1,0 +1,49 @@
+<!doctype html><meta charset="utf-8"><style>@font-face{font-family:Archivo;src:url(/node_modules/@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2) format("woff2");font-weight:100 900}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFExporter } from "three/addons/exporters/GLTFExporter.js";
+import { USDZExporter } from "three/addons/exporters/USDZExporter.js";
+const qrSrc = await (await fetch("/scripts/ar/qr.txt")).text();
+const qr = await new Promise((r) => { const i = new Image(); i.onload = () => r(i); i.src = qrSrc; });
+await document.fonts.load("800 80px Archivo");
+const W = 1700, H = 1000; // 85 x 50 mm card at 20 px/mm
+function face(draw) { const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d"); draw(x); return c; }
+const ACC = "#b08f74";
+const front = face((x) => {
+  x.fillStyle = "#121212"; x.fillRect(0, 0, W, H);
+  x.fillStyle = ACC; x.fillRect(90, 110, 120, 12);
+  x.fillStyle = "#f4f1ea"; x.font = "800 128px Archivo, Arial"; x.fillText("RAKTIM", 90, 290); x.fillText("CHANDRA", 90, 420);
+  x.font = "500 46px Archivo, Arial"; x.fillStyle = "#cfc8bd"; x.fillText("AI, ML and full-stack engineer", 90, 520);
+  x.font = "500 40px Archivo, Arial"; x.fillStyle = "#f4f1ea";
+  x.fillText("raktimchandra26@gmail.com", 90, 800); x.fillText("raktimchandra.vercel.app", 90, 870);
+  x.fillStyle = "#fff"; x.fillRect(1200, 440, 420, 420); x.drawImage(qr, 1215, 455, 390, 390);
+  x.fillStyle = "#cfc8bd"; x.font = "500 30px Archivo, Arial"; x.fillText("Scan to save my contact", 1210, 920);
+});
+const back = face((x) => {
+  x.fillStyle = ACC; x.fillRect(0, 0, W, H);
+  x.fillStyle = "#121212"; x.fillRect(40, 40, W - 80, H - 80);
+  x.fillStyle = "#f4f1ea"; x.font = "800 150px Archivo, Arial";
+  ["SHAME ON ME,", "IF I DIE", "AVERAGE."].forEach((l, i) => x.fillText(l, 110, 330 + i * 175));
+  x.fillStyle = ACC; x.font = "600 40px Archivo, Arial"; x.fillText("— a promise, not a slogan", 114, 890);
+});
+const tex = (c) => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; return t; };
+// Card 0.085 x 0.05 m, two planes back to back plus an edge box.
+const g = new THREE.Group(); g.name = "RaktimCard";
+const pf = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.05), new THREE.MeshStandardMaterial({ map: tex(front), roughness: 0.55 }));
+pf.position.z = 0.0004;
+const pb = new THREE.Mesh(new THREE.PlaneGeometry(0.085, 0.05), new THREE.MeshStandardMaterial({ map: tex(back), roughness: 0.55 }));
+pb.rotation.y = Math.PI; pb.position.z = -0.0004;
+const edge = new THREE.Mesh(new THREE.BoxGeometry(0.0849, 0.0499, 0.0007), new THREE.MeshStandardMaterial({ color: ACC }));
+// PlaneGeometry UVs + flipY false: flip V so the image is upright.
+for (const m of [pf, pb]) { const uv = m.geometry.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setY(i, 1 - uv.getY(i)); }
+g.add(edge, pf, pb);
+g.rotation.x = -Math.PI / 2 + 0.0001; // lies flat on a table in AR
+const scene = new THREE.Scene(); scene.add(g);
+const glb = await new GLTFExporter().parseAsync(scene, { binary: true });
+const u8 = new Uint8Array(glb); let s = ""; for (let i = 0; i < u8.length; i += 8192) s += String.fromCharCode(...u8.subarray(i, i + 8192)); const b64 = btoa(s);
+const usdz = await new USDZExporter().parseAsync(scene);
+const u2 = new Uint8Array(usdz); let s2 = ""; for (let i = 0; i < u2.length; i += 8192) s2 += String.fromCharCode(...u2.subarray(i, i + 8192));
+window.__usdz = btoa(s2);
+window.__glb = b64;
+</script>

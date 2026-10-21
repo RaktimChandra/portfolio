@@ -534,3 +534,23 @@ main { overflow-x: clip; }
 .arch3d__note { position: absolute; left: 1rem; right: 1rem; bottom: 0.8rem; margin: 0; font-size: var(--step-small); color: var(--ink); pointer-events: none; }
 .arch__list { display: grid; gap: 0.3rem; padding-left: 1.2rem; }
 @media (max-width: 700px) { .arch3d { height: min(130vw, 640px); } }
+.pstory { position: relative; height: 400vh; }
+.pstory__stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.pstory__canvas { position: absolute; inset: 0; }
+.pstory__cap { position: absolute; left: 0; right: 0; bottom: max(6vh, 2rem); display: grid; gap: 0.4rem; pointer-events: none; }
+.pstory__cap a { pointer-events: auto; }
+.pstory__h { font-size: clamp(1.8rem, 1rem + 3vw, 3.6rem); line-height: 1; margin: 0; }
+.pstory__cap p { max-width: 46ch; margin: 0; font-size: var(--step-1, 1.15rem); }
+.pstory__cta { display: flex; gap: 0.6rem; margin-top: 0.6rem !important; }
+.pstory__dots { position: absolute; right: var(--margin, 1rem); top: 50%; translate: 0 -50%; display: grid; gap: 0.5rem; list-style: none; margin: 0; padding: 0; }
+.pstory__dots li { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--ink); }
+.pstory__dots li[data-on] { background: var(--accent); border-color: var(--accent); }
+.pstory--flat { display: grid; gap: 1.4rem; padding-block: 3rem; }
+.globe-sec { margin-block: 2rem; }
+.globe { position: relative; height: clamp(340px, 60vw, 520px); cursor: grab; }
+.globe canvas { touch-action: pan-y; }
+.globe__note { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; font-size: var(--step-small); text-align: center; pointer-events: none; }
+.arcard { display: grid; gap: 1.2rem; padding: 1.2rem; margin-bottom: 3rem; align-items: center; }
+.arcard__view { height: 300px; cursor: grab; }
+.arcard__body { display: grid; gap: 0.7rem; justify-items: start; }
+@media (min-width: 800px) { .arcard { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } .arcard__view { height: 340px; } }

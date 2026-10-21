@@ -5,6 +5,7 @@ import { profile } from "@/content/profile";
 import { links } from "@/content/record";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
 import QRCode from "qrcode";
+import ARCard from "@/components/ARCard";
 import { SITE_URL } from "@/lib/site";
 
 export const generateStaticParams = localeParams;
@@ -52,6 +53,7 @@ export default async function Contact({ params }: LP) {
           <p><a className="btn" href="/raktim.vcf" download>Download contact card</a></p>
         </div>
       </section>
+      <ARCard />
       <h2 className="sec-title display">Or just write.</h2>
       <ContactField />
     </div>
