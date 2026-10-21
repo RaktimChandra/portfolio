@@ -3,6 +3,7 @@ import Resume from "@/components/Resume";
 import PrintButton from "@/components/PrintButton";
 import { Link } from "@/i18n/navigation";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
+import { roleCVs } from "@/content/roles";
 
 export const generateStaticParams = localeParams;
 export async function generateMetadata({ params }: LP) {
@@ -21,6 +22,10 @@ export default async function ResumePage({ params }: LP) {
             <PrintButton />
             <Link href="/match" className="btn btn-quiet">Tailor to a job</Link>
           </p>
+          <nav className="role-tabs" aria-label="Role versions">
+            <span className="text-small muted">By role:</span>
+            {roleCVs.map((r) => <Link key={r.slug} href={`/resume/${r.slug}`} className="chip">{r.title}</Link>)}
+          </nav>
         </PageHead>
       </div>
       <div className="cv-sheet">

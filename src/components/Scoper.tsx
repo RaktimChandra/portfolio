@@ -4,20 +4,8 @@ import { useMemo, useState } from "react";
 import { profile } from "@/content/profile";
 import { track } from "@/lib/analytics";
 
-const KINDS = [
-  { id: "web", label: "Web app or website", weeks: 3, stack: "Next.js, TypeScript, PostgreSQL" },
-  { id: "mobile", label: "Mobile app", weeks: 4, stack: "React Native (Expo)" },
-  { id: "ai", label: "AI agent or assistant", weeks: 3, stack: "Python, FastAPI, an LLM with retrieval and evaluation" },
-  { id: "ml", label: "ML model or prediction", weeks: 4, stack: "Python, scikit-learn or PyTorch, model serving" },
-  { id: "dash", label: "Dashboard or analytics", weeks: 2, stack: "SQL, a BI tool or a custom React dashboard" },
-  { id: "auto", label: "Automation or integration", weeks: 1.5, stack: "Node.js or Python workers, third-party APIs" },
-  { id: "qa", label: "Testing and QA", weeks: 2, stack: "Playwright, API and load tests in CI" },
-];
-const SIZE = [
-  { id: "s", label: "Small: one core flow", m: 0.6 },
-  { id: "m", label: "Medium: a few user roles", m: 1 },
-  { id: "l", label: "Large: many features, integrations", m: 1.8 },
-];
+import { KINDS, SIZE, planFor } from "@/content/scope";
+import { Link } from "@/i18n/navigation";
 
 export default function Scoper() {
   const [idea, setIdea] = useState("");
@@ -25,22 +13,7 @@ export default function Scoper() {
   const [size, setSize] = useState("m");
   const [deadline, setDeadline] = useState("");
 
-  const plan = useMemo(() => {
-    const ks = KINDS.filter((k) => kinds.includes(k.id));
-    if (!ks.length) return null;
-    const m = SIZE.find((s) => s.id === size)!.m;
-    const base = ks.reduce((n, k) => n + k.weeks, 0) * m;
-    const weeks = Math.max(1, Math.round(base * (ks.length > 1 ? 0.85 : 1)));
-    const lo = Math.max(1, Math.round(weeks * 0.8));
-    const hi = Math.round(weeks * 1.25);
-    const milestones = [
-      { w: 1, t: "Discovery call, written scope, designs or data audit" },
-      { w: Math.max(2, Math.round(weeks * 0.4)), t: `First working version of the core flow (${ks.map((k) => k.label.toLowerCase()).join(", ")})` },
-      { w: Math.max(3, Math.round(weeks * 0.8)), t: "Feature-complete on a preview link, with tests" },
-      { w: hi, t: "Launch, handover documents and a support window" },
-    ];
-    return { weeks, lo, hi, ks, milestones };
-  }, [kinds, size]);
+  const plan = useMemo(() => planFor(kinds, size), [kinds, size]);
 
   const mail = plan
     ? `mailto:${profile.email}?subject=${encodeURIComponent("Project scope")}&body=${encodeURIComponent(
@@ -81,7 +54,10 @@ export default function Scoper() {
             </ol>
             <p className="text-small"><b>Likely stack:</b> {plan.ks.map((k) => k.stack).join("; ")}.</p>
             <p className="text-small muted">A starting point, not a quote. The real estimate comes after a short call.</p>
-            <a className="btn" href={mail} onClick={() => track("project_scoped", { kinds, size, weeks: plan.weeks })}>Send this to Raktim</a>
+            <p style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              <a className="btn" href={mail} onClick={() => track("project_scoped", { kinds, size, weeks: plan.weeks })}>Send this to Raktim</a>
+              <Link className="btn btn-quiet" href={`/proposal?k=${kinds.join(",")}&s=${size}${deadline ? `&d=${deadline}` : ""}${idea ? `&i=${encodeURIComponent(idea.slice(0, 600))}` : ""}`} onClick={() => track("proposal_opened", { kinds, size })}>Make it a proposal PDF</Link>
+            </p>
           </>
         ) : (
           <p className="muted">Pick at least one kind of work to see a plan.</p>

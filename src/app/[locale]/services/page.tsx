@@ -1,3 +1,4 @@
+import BookCall from "@/components/BookCall";
 import { Link } from "@/i18n/navigation";
 import PageHead from "@/components/PageHead";
 import { freelance } from "@/content/experience";
@@ -18,6 +19,7 @@ export default async function Services({ params }: LP) {
       <PageHead title="Services" lede={`I've built for ${freelance.clients} clients since 2024: enterprises, startups and founders. One engineer from the first call to production.`}>
         <p style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
           <Link href="/scope" className="btn">Scope your project</Link>
+          <BookCall context="a project" quiet />
           <a href={`mailto:${profile.email}?subject=Project%20enquiry`} className="btn btn-quiet">Email me</a>
         </p>
       </PageHead>

@@ -606,3 +606,18 @@ main { overflow-x: clip; }
 .debate__bar { height: 6px; border-radius: 3px; background: color-mix(in oklab, var(--ink) 12%, transparent); overflow: hidden; }
 .debate__bar i { display: block; height: 100%; width: var(--w); background: var(--accent); transition: width 600ms var(--ease-out, ease-out); }
 @keyframes debate-in { from { opacity: 0; translate: 0 6px; } }
+.role-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.8rem; } .role-tabs [aria-current="page"] { background: var(--accent); color: var(--accent-ink, #fff); border-color: var(--accent); }
+.for-form { display: grid; gap: 0.5rem; max-width: 640px; }
+.for-page { display: grid; gap: 2rem; }
+.for-about { padding: 1.2rem 1.4rem; }
+.for-about blockquote { margin: 0.4rem 0 0; font-size: var(--step-1, 1.15rem); }
+.for-sec { display: grid; gap: 0.8rem; }
+.for-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; }
+.for-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.for-grid .card { display: grid; gap: 0.4rem; padding: 1.2rem; text-decoration: none; color: inherit; }
+.proposal-form { display: grid; gap: 0.6rem; max-width: 720px; margin-bottom: 2rem; }
+.proposal { display: grid; gap: 1.2rem; }
+.proposal h1 { font-size: clamp(1.8rem, 1.2rem + 2vw, 2.6rem); margin: 0.2rem 0; }
+.proposal h2 { font-size: 1.15rem; margin-bottom: 0.3rem; }
+.proposal ul, .proposal ol { padding-left: 1.2rem; display: grid; gap: 0.3rem; }
+.proposal__head { border-bottom: 2px solid currentColor; padding-bottom: 0.8rem; }

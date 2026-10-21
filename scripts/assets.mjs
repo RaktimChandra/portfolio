@@ -1,4 +1,4 @@
-// Renders public/resume.pdf from the live /resume page and the PNG app icons from icon.svg.
+// Renders public/resume.pdf (and the four role versions) from the live /resume pages and the PNG app icons from icon.svg.
 // usage: node scripts/assets.mjs http://localhost:3100
 import chromium from "@sparticuz/chromium";
 import { chromium as pw } from "playwright-core";
@@ -12,6 +12,13 @@ await page.goto(`${base}/resume?reality=glass`, { waitUntil: "networkidle" });
 await page.emulateMedia({ media: "print" });
 await page.pdf({ path: "public/resume.pdf", format: "A4", printBackground: true, margin: { top: "11mm", bottom: "11mm", left: "12mm", right: "12mm" } });
 console.log("wrote public/resume.pdf");
+for (const role of ["sde", "ai-ml", "data", "qa"]) {
+  await page.emulateMedia({ media: "screen" });
+  await page.goto(`${base}/resume/${role}?reality=glass`, { waitUntil: "networkidle" });
+  await page.emulateMedia({ media: "print" });
+  await page.pdf({ path: `public/resume-${role}.pdf`, format: "A4", printBackground: true, margin: { top: "11mm", bottom: "11mm", left: "12mm", right: "12mm" } });
+  console.log(`wrote public/resume-${role}.pdf`);
+}
 
 const svg = readFileSync("public/icon.svg", "utf8");
 for (const s of [192, 512]) {

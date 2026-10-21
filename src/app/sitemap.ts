@@ -3,7 +3,7 @@ import { SITE_URL } from "@/lib/site";
 import { projects } from "@/content/projects";
 import { posts } from "@/content/blog";
 
-const PAGES = ["", "/work", "/experience", "/services", "/research", "/achievements", "/certifications", "/about", "/resume", "/contact", "/skills", "/open-source", "/match", "/scope", "/brief", "/now", "/uses", "/lab", "/status", "/interview", "/journey", "/blog"];
+const PAGES = ["", "/work", "/experience", "/services", "/research", "/achievements", "/certifications", "/about", "/resume", "/contact", "/skills", "/open-source", "/match", "/scope", "/brief", "/now", "/uses", "/lab", "/status", "/interview", "/journey", "/blog", "/for", "/resume/sde", "/resume/ai-ml", "/resume/data", "/resume/qa"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const all = [...PAGES, ...projects.map((p) => `/work/${p.slug}`), ...posts.map((p) => `/blog/${p.slug}`)];

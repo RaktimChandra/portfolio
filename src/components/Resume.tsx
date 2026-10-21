@@ -5,14 +5,14 @@ import { awards, certifications, papers, skills } from "@/content/record";
 import { ym } from "@/lib/format";
 
 /** Résumé. Server-rendered; also used (with a subset) by the job matcher. */
-export default function Resume({ projects = featured.slice(0, 6), summary, highlightSkills }: { projects?: Project[]; summary?: string; highlightSkills?: string[] }) {
+export default function Resume({ projects = featured.slice(0, 6), summary, highlightSkills, headline }: { projects?: Project[]; summary?: string; highlightSkills?: string[]; headline?: string }) {
   const hs = new Set((highlightSkills ?? []).map((s) => s.toLowerCase()));
   return (
     <article className="cv">
       <header className="cv__head">
         <div>
           <h1 className="cv__name">{profile.name}</h1>
-          <p className="cv__role">{profile.role}</p>
+          <p className="cv__role">{headline ?? profile.role}</p>
         </div>
         <p className="cv__contact">
           {profile.location} · {profile.phone}<br />
@@ -62,7 +62,11 @@ export default function Resume({ projects = featured.slice(0, 6), summary, highl
 
       <section>
         <h2>Skills</h2>
-        {Object.entries(skills).slice(0, 7).map(([g, list]) => (
+        {Object.entries(skills)
+          .map(([g, list], i) => [g, list, highlightSkills?.length ? -list.filter((x) => hs.has(x.toLowerCase())).length * 100 + i : i] as const)
+          .sort((a, b) => a[2] - b[2])
+          .slice(0, 7)
+          .map(([g, list]) => (
           <p key={g}><b>{g}:</b> {list.map((s, i) => <span key={s}>{hs.has(s.toLowerCase()) ? <mark>{s}</mark> : s}{i < list.length - 1 ? ", " : ""}</span>)}</p>
         ))}
       </section>

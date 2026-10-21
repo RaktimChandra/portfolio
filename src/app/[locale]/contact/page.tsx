@@ -1,3 +1,4 @@
+import BookCall from "@/components/BookCall";
 import PageHead from "@/components/PageHead";
 import ContactField from "@/components/ContactField";
 import CopyButton from "@/components/CopyButton";
@@ -54,6 +55,7 @@ export default async function Contact({ params }: LP) {
         </div>
       </section>
       <ARCard />
+      <p style={{ marginBottom: "2rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}><BookCall /> <a className="btn btn-quiet" href="/for">See my work for your company</a></p>
       <h2 className="sec-title display">Or just write.</h2>
       <ContactField />
     </div>
