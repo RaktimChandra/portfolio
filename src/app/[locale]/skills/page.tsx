@@ -1,4 +1,5 @@
 import PageHead from "@/components/PageHead";
+import SkillGalaxyLazy from "@/components/SkillGalaxyLazy";
 import { skills } from "@/content/record";
 import { projects } from "@/content/projects";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
@@ -15,6 +16,7 @@ export default async function Skills({ params }: LP) {
   return (
     <div className="page wrap">
       <PageHead title="Skills" lede={`${total} skills in nine groups. The number beside each is how many projects on this site use it.`} />
+      <SkillGalaxyLazy />
       <div className="card-grid">
         {Object.entries(skills).map(([g, list]) => (
           <section key={g} className="card panel" data-title={g} data-reveal>

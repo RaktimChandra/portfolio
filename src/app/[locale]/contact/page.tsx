@@ -4,6 +4,8 @@ import CopyButton from "@/components/CopyButton";
 import { profile } from "@/content/profile";
 import { links } from "@/content/record";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
+import QRCode from "qrcode";
+import { SITE_URL } from "@/lib/site";
 
 export const generateStaticParams = localeParams;
 export async function generateMetadata({ params }: LP) {
@@ -13,6 +15,7 @@ export async function generateMetadata({ params }: LP) {
 
 export default async function Contact({ params }: LP) {
   await boot(params);
+  const qr = await QRCode.toString(`${SITE_URL}/raktim.vcf`, { type: "svg", margin: 0, color: { dark: "#111111", light: "#ffffff" } });
   const rows = [
     { k: "Email", v: profile.email, href: `mailto:${profile.email}`, copy: true },
     { k: "College email", v: "rc8823@srmist.edu.in", href: "mailto:rc8823@srmist.edu.in", copy: true },
@@ -41,6 +44,14 @@ export default async function Contact({ params }: LP) {
           ))}
         </tbody>
       </table>
+      <section className="card panel contact-card" data-title="Save my contact" style={{ marginBottom: "3rem" }}>
+        <div className="contact-card__qr" dangerouslySetInnerHTML={{ __html: qr }} aria-label="QR code that saves Raktim's contact card" role="img" />
+        <div style={{ display: "grid", gap: "0.75rem", alignContent: "center" }}>
+          <h2 className="card__title">Save me to your phone</h2>
+          <p className="muted">Scan with a phone camera, or download the contact card. Handy at a career fair.</p>
+          <p><a className="btn" href="/raktim.vcf" download>Download contact card</a></p>
+        </div>
+      </section>
       <h2 className="sec-title display">Or just write.</h2>
       <ContactField />
     </div>

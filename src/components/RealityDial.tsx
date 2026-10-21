@@ -46,6 +46,7 @@ export default function RealityDial() {
         <div className="dial__ctrl">
           <button type="button" className="btn btn-quiet" onClick={() => go(i - 1)} aria-label="Previous reality">←</button>
           <button type="button" className="btn btn-quiet" onClick={() => go(i + 1)} aria-label="Next reality">→</button>
+          <button type="button" className="btn btn-quiet" onClick={() => go(Math.floor(Math.random() * REALITIES.length))}>Surprise me</button>
           <button type="button" className="btn" onClick={close}>Keep this one</button>
         </div>
       </div>

@@ -4,6 +4,8 @@ import Hero from "@/components/Hero";
 import WorkLedger from "@/components/WorkLedger";
 import TwinBox from "@/components/TwinBox";
 import ContactField from "@/components/ContactField";
+import AgentPipelineLazy from "@/components/AgentPipelineLazy";
+import GitHubPulse from "@/components/GitHubPulse";
 import { profile } from "@/content/profile";
 import { experience, freelance } from "@/content/experience";
 import { featured } from "@/content/projects";
@@ -52,12 +54,23 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <p className="sec-foot"><Link href="/work" className="btn btn-quiet">{t("allWork")} →</Link></p>
       </section>
 
+      {/* How the agents work: a 3D pipeline you can drive */}
+      <section className="section wrap" aria-labelledby="pipe-h">
+        <header className="sec-head">
+          <h2 id="pipe-h" className="sec-title display" data-reveal>How my agents think.</h2>
+          <p className="sec-note" data-reveal>Every agent I ship runs the same loop: perceive, retrieve, reason, act, and hand the result to a human to sign. Pick an input and watch it travel through a real system.</p>
+        </header>
+        <AgentPipelineLazy />
+      </section>
+
       {/* AI twin, the headline you can type */}
       <section className="section wrap twin-sec" aria-labelledby="twin-h">
         <h2 id="twin-h" className="sec-title display" data-reveal>{t("twinTitle")}</h2>
         <p className="sec-note" data-reveal>{t("twinNote")}</p>
         <TwinBox variant="headline" />
       </section>
+
+      <GitHubPulse />
 
       {/* Experience as a receipt slip */}
       <section className="section wrap receipt-sec" aria-labelledby="exp-h">
@@ -66,7 +79,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <p className="receipt-sec__big display tabular">{experience.length}</p>
           <p className="text-lead">{t("receiptTotal")}</p>
           <p className="muted">{t("receiptFreelance")}</p>
-          <p><Link href="/experience" className="link-u">{tn("experience")} →</Link></p>
+          <p style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}><Link href="/experience" className="link-u">{tn("experience")} →</Link><Link href="/journey" className="link-u accent">Fly through it in 3D →</Link></p>
         </div>
         <div className="receipt" data-reveal>
           <p className="receipt__head">RAKTIM CHANDRA · WORK RECEIPT<br />SRMIST · CHENNAI · IN</p>

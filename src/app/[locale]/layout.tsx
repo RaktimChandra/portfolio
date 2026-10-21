@@ -61,7 +61,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     "@type": "Person",
     name: profile.name,
     url: SITE_URL,
-    image: profile.avatar,
+    image: `${SITE_URL}${profile.avatar}`,
     jobTitle: profile.role,
     email: `mailto:${profile.email}`,
     address: { "@type": "PostalAddress", addressLocality: "Chennai", addressCountry: "IN" },

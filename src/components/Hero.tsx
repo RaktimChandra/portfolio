@@ -6,6 +6,8 @@ import { Link } from "@/i18n/navigation";
 import { useUI, type Persona } from "@/lib/store";
 import { profile } from "@/content/profile";
 import { blip } from "@/lib/sound";
+import HeroPortrait from "./HeroPortrait";
+import ChennaiClock from "./ChennaiClock";
 
 const PERSONA_LINK: Record<Exclude<Persona, null>, string> = {
   recruiter: "/resume",
@@ -54,7 +56,7 @@ export default function Hero() {
         <div className="hero__id">
           {avatarOk ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={profile.avatar} alt="" width={56} height={56} className="hero__avatar" onError={() => setAvatarOk(false)} decoding="async" />
+            <img src={profile.avatarSmall} alt="" width={56} height={56} className="hero__avatar" onError={() => setAvatarOk(false)} decoding="async" />
           ) : (
             <span className="hero__avatar hero__avatar--fallback" aria-hidden="true">RC</span>
           )}
@@ -63,13 +65,14 @@ export default function Hero() {
             <span className="muted">{t("role")}</span>
           </p>
         </div>
-        <p className="hero__status">
-          <span className="dot" aria-hidden="true" />
-          {t("status")}
-        </p>
+        <div className="hero__status">
+          <p><span className="dot" aria-hidden="true" />{t("status")}</p>
+          <ChennaiClock />
+        </div>
       </div>
 
-      <div className="wrap hero__body">
+      <div className="wrap hero__grid">
+      <div className="hero__body">
         <p className="hero__line">{t("line")}</p>
         <div className="hero__cta">
           <Link href="/work" className="btn">{t("ctaWork")}</Link>
@@ -92,6 +95,8 @@ export default function Hero() {
             </p>
           )}
         </div>
+      </div>
+      <HeroPortrait />
       </div>
 
       <div className="hero__word" aria-hidden="true">

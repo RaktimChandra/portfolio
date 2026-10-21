@@ -26,7 +26,8 @@ export const profile = {
   github: "https://github.com/RaktimChandra",
   githubUser: "RaktimChandra",
   linkedin: "https://www.linkedin.com/in/raktim-chandra-83711a321/",
-  avatar: "https://avatars.githubusercontent.com/u/178108646?v=4&s=640",
+  avatar: "/raktim.jpg",
+  avatarSmall: "/raktim-160.jpg",
   education: {
     degree: "B.Tech, Computer Science and Engineering (Software Engineering)",
     school: "SRM Institute of Science and Technology, Kattankulathur, Chennai",

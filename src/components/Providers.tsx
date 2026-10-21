@@ -68,6 +68,37 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     };
   }, [pathname]);
 
+  // Cards lean toward the pointer, with a moving glare.
+  useEffect(() => {
+    if (!matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let cur: HTMLElement | null = null;
+    const reset = () => {
+      if (!cur) return;
+      cur.removeAttribute("data-tilting");
+      cur.style.removeProperty("--rx");
+      cur.style.removeProperty("--ry");
+      cur = null;
+    };
+    const on = (e: PointerEvent) => {
+      const el = (e.target as HTMLElement).closest?.<HTMLElement>(".card, .twin__card, .ledger__preview");
+      if (el !== cur) reset();
+      if (!el) return;
+      cur = el;
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width;
+      const y = (e.clientY - r.top) / r.height;
+      const k = el.classList.contains("ledger__preview") ? 4 : 9;
+      el.setAttribute("data-tilting", "");
+      el.style.setProperty("--ry", `${((x - 0.5) * k).toFixed(2)}deg`);
+      el.style.setProperty("--rx", `${((0.5 - y) * k).toFixed(2)}deg`);
+      el.style.setProperty("--gx", `${(x * 100).toFixed(1)}%`);
+      el.style.setProperty("--gy", `${(y * 100).toFixed(1)}%`);
+    };
+    window.addEventListener("pointermove", on, { passive: true });
+    document.addEventListener("pointerleave", reset);
+    return () => (window.removeEventListener("pointermove", on), document.removeEventListener("pointerleave", reset));
+  }, []);
+
   // Global shortcuts.
   useEffect(() => {
     let seq: string[] = [];

@@ -125,7 +125,8 @@
     "openSource": "Open source",
     "match": "Job matcher",
     "scope": "Project scoper",
-    "skills": "Skills"
+    "skills": "Skills",
+    "journey": "Journey (3D)"
   },
   "notFound": {
     "title": "Missed.",
