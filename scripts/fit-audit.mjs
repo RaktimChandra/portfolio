@@ -20,7 +20,7 @@ for (const w of [1440, 390]) {
         for (const el of document.querySelectorAll("body *")) {
           const cs = getComputedStyle(el);
           if (cs.display === "none" || cs.visibility === "hidden" || cs.position === "fixed") continue;
-          if (el.closest(".hero__word, .sr-only, canvas, .dial__list, .post__table, .tiles3d__canvas, svg")) continue;
+          if (el.closest(".hero__word, .sr-only, canvas, .dial__list, .post__table, .tiles3d__canvas, svg, .cw__code, .demo__table-wrap")) continue;
           const b = el.getBoundingClientRect();
           if (b.width && (b.right > vw + 1 || b.left < -1)) {
             // only report the outermost offender

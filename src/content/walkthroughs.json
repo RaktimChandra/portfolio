@@ -1,0 +1,162 @@
+[
+ {
+  "slug": "bulwark",
+  "repo": "bulwark",
+  "file": "backend/app/agents/consensus.py",
+  "sha": "25a6de36833be2df109957efa50202c5b793a68f",
+  "title": "How five agents become one verdict",
+  "start": 28,
+  "code": "    def decide(self, reports: list[AgentReport]) -> ConsensusDecision:\n        settings = get_settings()\n        if not reports:\n            return ConsensusDecision(\"review\", 0.5, 0.0, [\"no signals available\"])\n\n        weighted_sum = sum(r.score * r.weight for r in reports)\n        weight_total = sum(r.weight for r in reports)\n        base_score = weighted_sum / max(weight_total, 1e-6)\n\n        # Override: a confident, well-weighted extreme signal wins.\n        overrides = [r for r in reports if r.score >= 0.95 and r.weight >= 1.0]\n        if overrides:\n            base_score = max(base_score, max(r.score for r in overrides))\n\n        # Confidence = 1 \u2212 mean(distance from consensus), clipped.\n        spread = sum(abs(r.score - base_score) for r in reports) / len(reports)\n        confidence = float(max(0.0, min(1.0, 1.0 - spread)))\n\n        # Verdict via configured thresholds.\n        if base_score >= settings.block_threshold:\n            verdict = \"block\"\n        elif base_score >= settings.review_threshold:\n            verdict = \"review\"\n        else:\n            verdict = \"approve\"\n\n        # Top reasons \u2014 order agents by risk contribution (score * weight).\n        ranked = sorted(reports, key=lambda r: r.score * r.weight, reverse=True)\n        reasons: list[str] = []\n        for r in ranked:\n            if r.score < 0.1:\n                continue\n            reasons.append(f\"[{r.agent}] {r.rationale}\")\n            if len(reasons) >= 3:\n                break\n        if not reasons:\n            reasons = [\"All signals nominal.\"]\n\n        return ConsensusDecision(\n            verdict=verdict,\n            risk_score=float(round(base_score, 4)),\n            confidence=float(round(confidence, 4)),\n            top_reasons=reasons,\n        )",
+  "steps": [
+   {
+    "from": 33,
+    "to": 35,
+    "note": "A weighted average of every agent's risk score. Weights come from each agent's report, so a strong signal counts for more."
+   },
+   {
+    "from": 37,
+    "to": 40,
+    "note": "The override: one confident, heavily weighted signal (a sanctions hit, a confirmed mule cycle) lifts the score on its own, however calm the others are."
+   },
+   {
+    "from": 42,
+    "to": 44,
+    "note": "Confidence is how much the agents agree: one minus the mean distance from the consensus score."
+   },
+   {
+    "from": 46,
+    "to": 52,
+    "note": "Thresholds from settings turn the score into block, review or approve."
+   },
+   {
+    "from": 54,
+    "to": 64,
+    "note": "The explanation: agents ranked by score times weight, top three rationales kept. This is the trail an analyst reads."
+   }
+  ]
+ },
+ {
+  "slug": "marginalia",
+  "repo": "marginalia",
+  "file": "backend/app/agents/orchestrator.py",
+  "sha": "7c5f6cc0ce845ada35922d3fae243a6f97db591f",
+  "title": "The debate loop",
+  "start": 64,
+  "code": "        rounds = max_rounds or self.settings.max_debate_rounds\n        use_web = self.web.enabled if use_web is None else use_web\n\n        await set_status(SessionStatus.EXPLORING)\n\n        sources = self._retrieve(query, use_web=use_web)\n        ctx = DeliberationContext(\n            session_id=session_id, query=query, round=0, sources=sources\n        )\n\n        await broadcast(await self._log(\n            ctx, AgentRole.ORCHESTRATOR,\n            f\"Retrieved {len(sources)} sources (web={use_web}). Starting deliberation.\"\n        ))\n\n        # --- initial exploration ---\n        msg = await self.explorer.run(ctx)\n        await broadcast(msg)\n\n        # --- debate rounds ---\n        await set_status(SessionStatus.DEBATING)\n        for r in range(1, rounds + 1):\n            ctx.round = r\n            skeptic_msg = await self.skeptic.run(ctx)\n            await broadcast(skeptic_msg)\n\n            verifier_msg = await self.verifier.run(ctx)\n            await broadcast(verifier_msg)\n\n            # Early stop: if the skeptic raised nothing AND the verifier's\n            # last pass didn't move any claim into contested, we've converged.\n            if not skeptic_msg.references and not any(c.contested for c in ctx.claims):\n                await broadcast(await self._log(\n                    ctx, AgentRole.ORCHESTRATOR,\n                    f\"Convergence detected after round {r}. Halting debate.\"\n                ))\n                break\n\n        # --- synthesis ---\n        await set_status(SessionStatus.SYNTHESIZING)\n        ctx.round += 1\n        synth_msg = await self.synth.run(ctx)\n        await broadcast(synth_msg)\n\n        report: Report = ctx.scratch[\"report\"]\n        await set_status(SessionStatus.COMPLETE)\n        return report",
+  "steps": [
+   {
+    "from": 67,
+    "to": 77,
+    "note": "Retrieve sources first, and broadcast every step so the UI can show the deliberation live."
+   },
+   {
+    "from": 79,
+    "to": 81,
+    "note": "The Explorer proposes the first set of claims."
+   },
+   {
+    "from": 83,
+    "to": 91,
+    "note": "Each round, the Skeptic attacks and the Verifier checks. Both messages are streamed."
+   },
+   {
+    "from": 93,
+    "to": 100,
+    "note": "Stop early when the Skeptic raises nothing and no claim is contested: the agents have converged."
+   },
+   {
+    "from": 102,
+    "to": 110,
+    "note": "Only then does the Synthesizer write the report."
+   }
+  ]
+ },
+ {
+  "slug": "business-entity-resolution",
+  "repo": "business-entity-resolution",
+  "file": "src/ber/pruner.py",
+  "sha": "39d66bbd3d062c6b629d13e6728a58f6dc965d7f",
+  "title": "Pruning candidates without losing matches",
+  "start": 33,
+  "code": "def fit_pruner(cand: pd.DataFrame, y: np.ndarray, cfg, log=None):\n    \"\"\"Return (oof_scores, final_model, threshold, stats).\"\"\"\n    rng = np.random.default_rng(cfg.seed + 11)\n    X = cand[BLOCK_FEATURES].astype(np.float32)\n    folds = group_folds(cand[\"s1_row\"].to_numpy(), cfg.n_folds, cfg.seed + 3)\n    oof = np.zeros(len(cand), dtype=np.float64)\n    for k in range(cfg.n_folds):\n        tr = _cap_rows(np.flatnonzero(folds != k), cfg.pruner_max_rows, rng)\n        va = np.flatnonzero(folds == k)\n        if len(tr) == 0 or len(va) == 0:\n            continue\n        m = lgb.train(_params(cfg, k), lgb.Dataset(X.iloc[tr], y[tr]), num_boost_round=cfg.pruner_rounds)\n        oof[va] = m.predict(X.iloc[va])\n    all_idx = _cap_rows(np.arange(len(cand)), cfg.pruner_max_rows, rng)\n    final = lgb.train(_params(cfg, 99), lgb.Dataset(X.iloc[all_idx], y[all_idx]),\n                      num_boost_round=cfg.pruner_rounds)\n\n    # most aggressive threshold that keeps (1 - tolerance) of the true pairs\n    pos_scores = np.sort(oof[y == 1])\n    n_pos = len(pos_scores)\n    if n_pos == 0:\n        thr = 0.0\n    else:\n        allowed_loss = int(np.floor(cfg.prune_tolerance * n_pos))\n        thr = float(pos_scores[allowed_loss]) if allowed_loss < n_pos else 0.0\n        thr = min(thr, cfg.prune_max_threshold)\n    keep = oof >= thr\n    stats = {\n        \"threshold\": thr,\n        \"pairs_before\": int(len(cand)),\n        \"pairs_after\": int(keep.sum()),\n        \"true_pairs_before\": int(n_pos),\n        \"true_pairs_after\": int((keep & (y == 1)).sum()),\n    }\n    if log:\n        log.info(\"pruner: threshold %.5f keeps %d/%d pairs (%.1f%%) and %d/%d true pairs\",",
+  "steps": [
+   {
+    "from": 36,
+    "to": 45,
+    "note": "Out-of-fold scores: each fold's pruner never saw the source entities it scores, so the matcher trains on honest candidates."
+   },
+   {
+    "from": 46,
+    "to": 48,
+    "note": "A final pruner on all rows, used at inference."
+   },
+   {
+    "from": 50,
+    "to": 58,
+    "note": "The threshold is the most aggressive one that still keeps (1 \u2212 tolerance) of the true pairs, capped by a maximum."
+   },
+   {
+    "from": 59,
+    "to": 65,
+    "note": "Counts before and after, logged so every run states what pruning cost."
+   }
+  ]
+ },
+ {
+  "slug": "testharness",
+  "repo": "TestHarness",
+  "file": ".github/scripts/fault_matrix.py",
+  "sha": "28cb6d13304db66411b52c5e46a17315f806e7ed",
+  "title": "Which suite caught which bug",
+  "start": 16,
+  "code": "def main():\n    src, out = sys.argv[1], sys.argv[2]\n    runs = {}\n    for f in glob.glob(os.path.join(src, \"*.json\")):\n        d = json.load(open(f))\n        if \"bug\" in d:\n            runs[d[\"bug\"]] = d[\"suites\"]\n    baseline = runs.get(\"NONE\", {})\n    bugs = sorted(b for b in runs if b != \"NONE\")\n    suites = [s for s in ORDER if any(s in runs[b] for b in runs)]\n    matrix = {}\n    for b in bugs:\n        matrix[b] = {}\n        for s in suites:\n            r = runs[b].get(s)\n            base = baseline.get(s)\n            if r is None:\n                cell = {\"status\": \"not-run\"}\n            elif base is None:\n                cell = {\"status\": \"no-baseline\", \"failed\": r[\"failed\"], \"tests\": r[\"tests\"]}\n            elif base[\"detected\"]:\n                cell = {\"status\": \"baseline-red\", \"failed\": r[\"failed\"], \"tests\": r[\"tests\"]}\n            else:\n                cell = {\"status\": \"caught\" if r[\"detected\"] else \"escaped\", \"failed\": r[\"failed\"],\n                        \"tests\": r[\"tests\"], \"exit_code\": r[\"exit_code\"], \"seconds\": r[\"seconds\"],\n                        \"failures\": r[\"failures\"][:12]}\n            matrix[b][s] = cell\n    caught_by = {b: [s for s in suites if matrix[b][s][\"status\"] == \"caught\"] for b in bugs}\n    rate = {s: (sum(1 for b in bugs if matrix[b][s][\"status\"] == \"caught\") / len(bugs)) if bugs else 0\n            for s in suites}\n    result = {\"baseline\": baseline, \"bugs\": bugs, \"suites\": suites, \"matrix\": matrix,\n              \"detection_rate_per_suite\": rate, \"caught_by\": caught_by,\n              \"escaped_all\": [b for b in bugs if not caught_by[b]]}",
+  "steps": [
+   {
+    "from": 23,
+    "to": 25,
+    "note": "The run with no bug switched on is the baseline."
+   },
+   {
+    "from": 30,
+    "to": 41,
+    "note": "A suite only gets credit if it was green on the baseline and red with the bug. A suite already failing proves nothing."
+   },
+   {
+    "from": 43,
+    "to": 48,
+    "note": "Detection rate per suite, and the bugs that escaped every suite."
+   }
+  ]
+ },
+ {
+  "slug": "genesis",
+  "repo": "genesis",
+  "file": "lib/pipeline.ts",
+  "sha": "d15fd412481f18783881ff3e91f5850b115c497a",
+  "title": "Verify, then debug, until clean",
+  "start": 134,
+  "code": "  // \u2500\u2500 4 + 5. VERIFY \u2192 DEBUG loop (operates on the agent-authored files) \u2500\u2500\u2500\u2500\u2500\n  let iteration = 0;\n  while (iteration < maxIterations) {\n    emit({ type: \"phase\", agent: \"verifier\", status: \"start\" });\n    const verOut = await runAgent(\n      VERIFIER_SYSTEM,\n      `Audit these files.\\n\\n${filesToContext(appFiles)}`,\n      (d) => emit({ type: \"token\", agent: \"verifier\", text: d }),\n      3000\n    );\n    account(verOut);\n    const issues = extractJson<Issue[]>(verOut.text) ?? [];\n    issuesFound += issues.length;\n    emit({ type: \"issues\", issues, iteration });\n    emit({ type: \"phase\", agent: \"verifier\", status: \"done\" });\n\n    const blocking = issues.filter(\n      (i) => i.severity === \"critical\" || i.severity === \"warning\"\n    );\n    if (blocking.length === 0) break;\n\n    debugIterations++;\n    emit({ type: \"phase\", agent: \"debugger\", status: \"start\" });\n    const dbgOut = await runAgent(\n      DEBUGGER_SYSTEM,\n      `Current files:\\n\\n${filesToContext(appFiles)}\\n\\nIssues to fix:\\n${JSON.stringify(blocking, null, 2)}`,\n      (d) => emit({ type: \"token\", agent: \"debugger\", text: d }),\n      8000\n    );\n    account(dbgOut);\n    const patched = parseFiles(dbgOut.text);\n    const fixes: Fix[] = blocking.map((i) => ({\n      issueId: i.id,\n      file: i.file,\n      summary: i.title,\n    }));\n    issuesFixed += fixes.length;\n    // Merge patched files over the agent-authored set.\n    for (const pf of patched) {\n      const idx = appFiles.findIndex((f) => f.path === pf.path);\n      if (idx >= 0) appFiles[idx] = pf;\n      else appFiles.push(pf);\n      emit({ type: \"file\", file: pf });\n    }\n    emit({ type: \"fixes\", fixes, iteration });\n    emit({ type: \"phase\", agent: \"debugger\", status: \"done\" });\n    iteration++;\n  }",
+  "steps": [
+   {
+    "from": 136,
+    "to": 148,
+    "note": "The Verifier audits the generated files and returns issues as JSON."
+   },
+   {
+    "from": 150,
+    "to": 153,
+    "note": "Only critical issues and warnings block. None left: the loop ends."
+   },
+   {
+    "from": 155,
+    "to": 163,
+    "note": "The Debugger gets the files and the blocking issues, and returns patched files."
+   },
+   {
+    "from": 171,
+    "to": 177,
+    "note": "Patches are merged over the agent-authored files, then the loop audits again."
+   }
+  ]
+ }
+]

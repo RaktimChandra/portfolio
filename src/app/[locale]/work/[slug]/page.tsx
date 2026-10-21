@@ -7,6 +7,8 @@ import DemoVideo from "@/components/DemoVideo";
 import { localize } from "@/content/i18n";
 import TrackView from "@/components/TrackView";
 import Architecture from "@/components/Architecture";
+import CodeWalk from "@/components/CodeWalk";
+import LiveDemo from "@/components/demos/LiveDemo";
 import { routing } from "@/i18n/routing";
 import { meta } from "@/lib/page";
 
@@ -76,6 +78,8 @@ export default async function CaseStudy({ params }: P) {
       ) : null}
 
       <Architecture slug={p.slug} title={t("system")} />
+      <LiveDemo slug={p.slug} />
+      <CodeWalk slug={p.slug} />
 
       <div className="case">
         <div className="prose">
