@@ -91,8 +91,13 @@ await check("language switch to Bengali", async () => {
 });
 await check("404 penalty game", async () => {
   await page.goto(base + "/does-not-exist", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Shoot top left" }).click();
-  await page.getByText(/Goals 1|Goals 0/).waitFor();
+  const c = page.locator(".pens canvas");
+  await c.waitFor({ timeout: 20000 });
+  await page.waitForTimeout(2500);
+  const b = await c.boundingBox();
+  await page.mouse.move(b.x + b.width * 0.4, b.y + b.height * 0.45);
+  await page.mouse.click(b.x + b.width * 0.4, b.y + b.height * 0.45);
+  await page.getByText(/GOAL|Saved|Wide|Over the bar|woodwork/).waitFor({ timeout: 10000 });
 });
 await check("status page lists demos", async () => {
   await page.goto(base + "/status", { waitUntil: "networkidle" });
