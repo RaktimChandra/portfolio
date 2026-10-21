@@ -7,7 +7,7 @@ import { useUI } from "@/lib/store";
 import { getProject } from "@/content/projects";
 import { blip } from "@/lib/sound";
 import { track } from "@/lib/analytics";
-import { speak as say, stopSpeaking, type Speaker } from "@/lib/voice";
+import { speak as say, stopSpeaking } from "@/lib/voice";
 
 type QA = { q: string; a?: string; shown?: number; sources?: { title: string; href: string }[]; followups?: string[]; projects?: string[]; err?: boolean; mode?: string };
 
@@ -32,7 +32,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
   const talkRef = useRef(false);
   const [phase, setPhase] = useState<"idle" | "listening" | "thinking" | "speaking">("idle");
   const [level, setLevel] = useState(0);
-  const [speaker, setSpeaker] = useState<Speaker | null>(null);
+
 
   useEffect(() => {
     const W = window as unknown as { SpeechRecognition?: new () => SR; webkitSpeechRecognition?: new () => SR };
@@ -52,8 +52,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
 
   const speak = async (text: string) => {
     setPhase("speaking");
-    const who = await say(text, setLevel);
-    setSpeaker(who);
+    await say(text, setLevel);
     setPhase("idle");
     if (talkRef.current) setTimeout(() => talkRef.current && listen(), 350);
   };
@@ -186,7 +185,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
           <span className="twin__orb-ball" aria-hidden="true" />
           <span className="text-small">
             {phase === "listening" ? "Listening. Ask anything about me." : phase === "thinking" ? "Thinking…" : phase === "speaking" ? "Speaking" : "Ready"}
-            {" · "}<b>AI voice</b>{speaker === "browser" ? " (your device's voice; my cloned voice is coming)" : speaker === "cloned" ? " (a clone of my voice, not me live)" : ""}
+            {" · "}<b>AI voice</b>
           </span>
         </div>
       )}

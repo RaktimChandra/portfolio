@@ -22,7 +22,7 @@ export const links = {
     Kaggle: "",
     HuggingFace: "https://huggingface.co/RaktimChandra",
   } as Record<string, string>,
-  calendly: "",
+  calendly: "https://cal.com/raktim-chandra/20-minute-intro-call",
   /** Abstracts for the paper pages, keyed like `ieee`. Empty = "abstract to follow". */
   abstracts: {} as Record<string, string>,
   cert: {} as Record<string, string>,
