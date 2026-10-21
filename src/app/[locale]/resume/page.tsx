@@ -30,6 +30,7 @@ export default async function ResumePage({ params }: LP) {
           </nav>
         </PageHead>
       </div>
+      {xl.locale !== "en" && <p className="no-print muted text-small">{xl("The résumé itself is in English, as recruiters expect.")}</p>}
       <div className="cv-sheet">
         <Resume />
       </div>

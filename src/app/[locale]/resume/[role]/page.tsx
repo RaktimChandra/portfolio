@@ -40,6 +40,7 @@ export default async function RoleResume({ params }: P) {
           </nav>
         </PageHead>
       </div>
+      {xl.locale !== "en" && <p className="no-print muted text-small">{xl("The résumé itself is in English, as recruiters expect.")}</p>}
       <div className="cv-sheet">
         <Resume projects={roleProjects(r)} summary={r.summary} highlightSkills={r.skills} headline={r.title} />
       </div>

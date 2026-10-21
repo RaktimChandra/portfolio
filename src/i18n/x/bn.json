@@ -1199,5 +1199,6 @@
  "— consent-scoped multi-provider LLM adapter for the Kai agent, merged as PR #784. 1344 of 1344 tests and all nine CI checks green.": "— Kai এজেন্টের জন্য সম্মতি-সীমিত মাল্টি-প্রোভাইডার LLM অ্যাডাপ্টার, PR #784 হিসেবে মার্জ। ১৩৪৪-এর মধ্যে ১৩৪৪ টেস্ট আর নয়টি CI চেকই সবুজ।",
  "← Back": "← ফিরে যান",
  "← Previous": "← আগের",
- "▶ Play the 30-second demo": "▶ ৩০ সেকেন্ডের ডেমো চালান"
+ "▶ Play the 30-second demo": "▶ ৩০ সেকেন্ডের ডেমো চালান",
+ "The résumé itself is in English, as recruiters expect.": "রেজিউমে ইংরেজিতেই, যেমনটা রিক্রুটাররা আশা করেন।"
 }
