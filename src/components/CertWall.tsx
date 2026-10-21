@@ -51,7 +51,7 @@ export default function CertWall() {
         <div className="certwall__open panel" role="dialog" aria-label={c.name}>
           <p className="text-small muted">{c.group} · {c.issuer}</p>
           <p className="card__title">{c.name}</p>
-          {links.cert[c.name] ? <a className="btn" href={links.cert[c.name]} target="_blank" rel="noopener">Verify ↗</a> : <p className="text-small muted">Verification link on request.</p>}
+          {links.cert[c.name] ? <a className="btn" href={links.cert[c.name]} target="_blank" rel="noopener">Verify ↗</a> : null}
           <button type="button" className="chip" onClick={() => setOpen(null)}>Close</button>
         </div>
       )}

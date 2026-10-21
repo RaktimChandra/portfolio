@@ -30,8 +30,10 @@ export default async function PaperPage({ params }: P) {
   const abs = links.abstracts[p.key];
   const bib = `@inproceedings{chandra${p.year}${p.key.toLowerCase()},\n  title     = {${p.title}},\n  author    = {Chandra, Raktim and others},\n  booktitle = {${p.venue}},\n  year      = {${p.year}}${href ? `,\n  url       = {${href}}` : ""}\n}`;
   const rel = RELATED[p.key];
+  const ld = { "@context": "https://schema.org", "@type": "ScholarlyArticle", headline: p.title, about: p.area, datePublished: String(p.year), author: { "@type": "Person", name: "Raktim Chandra" }, publisher: { "@type": "Organization", name: "IEEE" }, ...(href ? { url: href } : {}), ...(abs ? { abstract: abs } : {}) };
   return (
     <div className="page wrap">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <header className="page-head">
         <p className="crumbs"><Link href="/research" className="link-u">Research</Link> · {p.area}</p>
         <h1 className="page-title display">{p.title}</h1>
@@ -39,8 +41,7 @@ export default async function PaperPage({ params }: P) {
       </header>
       <div className="case">
         <div className="prose">
-          <h2>Abstract</h2>
-          <p className={abs ? "" : "muted"}>{abs || "The abstract and full text will be posted here when the proceedings are published on IEEE Xplore."}</p>
+          {abs ? <><h2>Abstract</h2><p>{abs}</p></> : <p className="text-lead">{p.title} is a paper on {p.area.toLowerCase()}, presented at an {p.venue} in {p.year}.</p>}
           {rel && (
             <>
               <h2>The code</h2>
@@ -59,7 +60,7 @@ export default async function PaperPage({ params }: P) {
             <div><dt className="muted text-small">Area</dt><dd>{p.area}</dd></div>
             <div><dt className="muted text-small">Co-authors across the papers</dt><dd>{research.coauthors}</dd></div>
           </dl>
-          {href ? <a className="btn" href={href} target="_blank" rel="noopener">Read on IEEE Xplore ↗</a> : <p className="text-small muted">Link coming with publication.</p>}
+          {href ? <a className="btn" href={href} target="_blank" rel="noopener">Read on IEEE Xplore ↗</a> : null}
         </aside>
       </div>
     </div>

@@ -77,6 +77,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <meta name="theme-color" content="#111111" />
         <script dangerouslySetInnerHTML={{ __html: BOOT_SCRIPT }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(person) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: profile.name, url: SITE_URL, inLanguage: ["en", "hi", "bn"], author: { "@type": "Person", name: profile.name } }) }} />
       </head>
       <body>
         <a href="#main" className="skip btn">{t("skip")}</a>

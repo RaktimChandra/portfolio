@@ -64,7 +64,9 @@ function Keeper({ color, pose }: { color: string; pose: React.RefObject<{ x: num
   );
 }
 
-function Scene({ accent, onResult, phase, setPhase }: { accent: string; onResult: (r: Result) => void; phase: Phase; setPhase: (p: Phase) => void }) {
+type Ctl = { nudge: (dx: number, dy: number) => void; fire: () => void };
+
+function Scene({ accent, onResult, phase, setPhase, ctlRef }: { accent: string; onResult: (r: Result) => void; phase: Phase; setPhase: (p: Phase) => void; ctlRef: React.RefObject<Ctl | null> }) {
   const { camera } = useThree();
   const pitch = useMemo(() => pitchTexture(), []);
   const ball = useRef<THREE.Mesh>(null);
@@ -82,10 +84,7 @@ function Scene({ accent, onResult, phase, setPhase }: { accent: string; onResult
     if (phase !== "aim") return;
     target.current.set(THREE.MathUtils.clamp(e.point.x, -5.5, 5.5), THREE.MathUtils.clamp(e.point.y, 0.1, 3.6), 0);
   };
-  const onShoot = (e: ThreeEvent<MouseEvent>) => {
-    if (phase !== "aim") return;
-    e.stopPropagation();
-    target.current.set(THREE.MathUtils.clamp(e.point.x, -5.5, 5.5), THREE.MathUtils.clamp(e.point.y, 0.1, 3.6), 0);
+  function fire() {
     const to = target.current.clone().add(new THREE.Vector3((Math.random() - 0.5) * 0.35, (Math.random() - 0.5) * 0.25, 0));
     // The keeper reads one shot in three, otherwise guesses.
     const read = Math.random() < 0.34;
@@ -95,7 +94,20 @@ function Scene({ accent, onResult, phase, setPhase }: { accent: string; onResult
     shot.current = { t: 0, from: new THREE.Vector3(0, 0.11, SPOT), to, curve: (Math.random() - 0.5) * 0.8, kx, ky };
     setPhase("flight");
     blip("tick");
+  }
+  const onShoot = (e: ThreeEvent<MouseEvent>) => {
+    if (phase !== "aim") return;
+    e.stopPropagation();
+    target.current.set(THREE.MathUtils.clamp(e.point.x, -5.5, 5.5), THREE.MathUtils.clamp(e.point.y, 0.1, 3.6), 0);
+    fire();
   };
+  // Keyboard: arrows aim, Enter or Space shoots.
+  useEffect(() => {
+    ctlRef.current = {
+      nudge: (dx, dy) => void (phase === "aim" && target.current.set(THREE.MathUtils.clamp(target.current.x + dx, -5.5, 5.5), THREE.MathUtils.clamp(target.current.y + dy, 0.1, 3.6), 0)),
+      fire: () => void (phase === "aim" && fire()),
+    };
+  });
 
   useFrame((_, dt) => {
     if (aim.current) {
@@ -174,6 +186,7 @@ const SAY: Record<Result, string> = { goal: "GOAL. Top bins.", saved: "Saved. He
 export default function Penalty3D() {
   const accent = useMemo(() => `#${cssColor("--accent", "#b08f74").getHexString()}`, []);
   const [phase, setPhase] = useState<Phase>("aim");
+  const ctlRef = useRef<Ctl | null>(null);
   const [log, setLog] = useState<Result[]>([]);
   const [best, setBest] = useState(() => { try { return Number(localStorage.getItem("rc.pens") || 0); } catch { return 0; } });
   const goals = log.filter((r) => r === "goal").length;
@@ -192,15 +205,31 @@ export default function Penalty3D() {
   };
   const last = log[log.length - 1];
   return (
-    <div className="pens">
+    <div
+      className="pens"
+      tabIndex={0}
+      role="application"
+      aria-label="Penalty shoot-out. Arrow keys aim, Enter or Space shoots."
+      onKeyDown={(e) => {
+        const k = e.key, c = ctlRef.current;
+        if (!c) return;
+        if (k === "ArrowLeft") c.nudge(-0.4, 0);
+        else if (k === "ArrowRight") c.nudge(0.4, 0);
+        else if (k === "ArrowUp") c.nudge(0, 0.3);
+        else if (k === "ArrowDown") c.nudge(0, -0.3);
+        else if (k === "Enter" || k === " ") c.fire();
+        else return;
+        e.preventDefault();
+      }}
+    >
       <Canvas dpr={[1, 1.5]} camera={{ fov: 33, near: 0.1, far: 80 }} gl={{ antialias: true }}>
-        <Scene accent={accent} onResult={onResult} phase={over ? "done" : phase} setPhase={setPhase} />
+        <Scene accent={accent} onResult={onResult} phase={over ? "done" : phase} setPhase={setPhase} ctlRef={ctlRef} />
       </Canvas>
       <div className="pens__hud">
         <span className="pens__dots" aria-label={`${goals} goals from ${log.length} kicks`}>
           {Array.from({ length: 5 }, (_, i) => <i key={i} data-r={log[i] ?? ""} />)}
         </span>
-        <b aria-live="polite">{over ? `${goals} / 5. ${goals >= 4 ? "Ice cold." : goals >= 2 ? "Respectable." : "The keeper had your number."}` : phase === "done" && last ? SAY[last] : "Aim at the goal. Click to shoot."}</b>
+        <b aria-live="polite">{over ? `${goals} / 5. ${goals >= 4 ? "Ice cold." : goals >= 2 ? "Respectable." : "The keeper had your number."}` : phase === "done" && last ? SAY[last] : "Aim at the goal and click, or use the arrow keys and Enter."}</b>
         <span className="tabular">Best {best}/5</span>
         {over && <button type="button" className="btn" onClick={() => setLog([])}>Again</button>}
       </div>

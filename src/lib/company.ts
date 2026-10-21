@@ -52,13 +52,24 @@ export function nameFromDomain(domain: string) {
   return core.charAt(0).toUpperCase() + core.slice(1);
 }
 
+/** At most 20 outbound homepage reads a minute per server instance, so the page can't be used as a crawler. */
+const recent: number[] = [];
+function allowFetch() {
+  const now = Date.now();
+  while (recent.length && now - recent[0] > 60_000) recent.shift();
+  if (recent.length >= 20) return false;
+  recent.push(now);
+  return true;
+}
+
 export async function readCompany(input: string): Promise<Company | null> {
   let u = normalise(input);
   if (!u) return null;
+  const allowed = allowFetch();
   const domain = u.hostname.replace(/^www\./, "");
   let html = "";
   try {
-    for (let hop = 0; hop < 4; hop++) {
+    for (let hop = 0; allowed && hop < 4; hop++) {
       if (!(await safe(u))) break;
       const r: Response = await fetch(u, { redirect: "manual", signal: AbortSignal.timeout(6000), headers: { "User-Agent": "raktimchandra.vercel.app tailoring (reads public homepage once)", Accept: "text/html" }, next: { revalidate: 86400 } });
       if (r.status >= 300 && r.status < 400 && r.headers.get("location")) {

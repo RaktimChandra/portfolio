@@ -25,6 +25,7 @@ export type Project = {
   status: "shipped" | "deployed" | "research" | "in development" | "delivered";
   featured?: number; // order on the home page; lower = earlier
   private?: boolean; // code not public
+  draft?: boolean; // no write-up yet: kept out of every list and page until there is one
 };
 
 const gh = (r: string) => `https://github.com/RaktimChandra/${r}`;
@@ -43,7 +44,7 @@ export const DOMAIN_LABEL: Record<Domain, string> = {
   security: "Security and privacy",
 };
 
-export const projects: Project[] = [
+const allProjects: Project[] = [
   {
     slug: "clindocmicro",
     title: "ClinDocMicro",
@@ -775,6 +776,7 @@ export const projects: Project[] = [
     slug: "jobsphere",
     title: "JOBsphere",
     tagline: "Write-up in progress.",
+    draft: true,
     year: 2025,
     domains: ["fullstack", "ml"],
     stack: [],
@@ -786,6 +788,7 @@ export const projects: Project[] = [
     slug: "visionxpert",
     title: "VisionXpert",
     tagline: "Write-up in progress.",
+    draft: true,
     year: 2025,
     domains: ["ml"],
     stack: [],
@@ -797,6 +800,7 @@ export const projects: Project[] = [
     slug: "payment-simulator",
     title: "Distributed Payment Simulator",
     tagline: "Write-up in progress.",
+    draft: true,
     year: 2026,
     domains: ["systems"],
     stack: [],
@@ -819,6 +823,7 @@ export const projects: Project[] = [
     slug: "disease-prediction-validator",
     title: "Disease Prediction Validator",
     tagline: "Write-up in progress.",
+    draft: true,
     year: 2026,
     domains: ["ml"],
     stack: [],
@@ -827,6 +832,9 @@ export const projects: Project[] = [
     private: true,
   },
 ];
+
+/** Everything with a write-up. Drafts stay out until they have one. */
+export const projects = allProjects.filter((p) => !p.draft);
 
 export const factsFor = (p: Project) => (p.repo ? repoFacts[p.repo] : undefined);
 export function factLine(p: Project) {

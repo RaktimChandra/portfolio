@@ -1,0 +1,8 @@
+/* TEAM */
+Built by: Raktim Chandra
+Contact: raktimchandra26@gmail.com
+From: Chennai, India
+
+/* SITE */
+Stack: Next.js, React, TypeScript, three.js / React Three Fiber, WebGL2 shaders, next-intl
+Languages: English, Hindi, Bengali

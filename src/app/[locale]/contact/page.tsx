@@ -38,7 +38,7 @@ export default async function Contact({ params }: LP) {
               <td>{r.copy ? <CopyButton text={r.v} /> : null}</td>
             </tr>
           ))}
-          {Object.entries(links.platforms).map(([k, v]) => (
+          {Object.entries(links.platforms).filter(([, v]) => v).map(([k, v]) => (
             <tr key={k}>
               <th scope="row">{k}</th>
               <td>{v ? <a className="link-u" href={v} target="_blank" rel="noopener">{v.replace(/^https?:\/\//, "")}</a> : <span className="muted">Profile link coming soon</span>}</td>

@@ -27,7 +27,7 @@ export default async function Certifications({ params }: LP) {
                 <li key={c.name} className="card panel" data-title={c.issuer} data-reveal>
                   <p className="card__meta">{c.issuer}</p>
                   <p className="card__title" style={{ fontSize: "1.1rem" }}>{c.name}</p>
-                  {href ? <a className="link-u text-small" href={href} target="_blank" rel="noopener">Verify ↗</a> : <span className="text-small muted">Verification link on request</span>}
+                  {href ? <a className="link-u text-small" href={href} target="_blank" rel="noopener">Verify ↗</a> : null}
                 </li>
               );
             })}

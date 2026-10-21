@@ -67,15 +67,7 @@ export default async function CaseStudy({ params }: P) {
         </section>
       )}
 
-      {p.video ? (
-        <DemoVideo src={p.video} title={p.title} />
-      ) : p.featured ? (
-        <div className="demo-video demo-video--empty panel" data-title="Demo">
-          <p className="text-small muted">30-second demo</p>
-          <p>A screen recording of {p.title} running end to end is being cut.{p.demo ? " Meanwhile, the live version is one click away." : ""}</p>
-          {p.demo && <a className="btn btn-quiet" href={p.demo} target="_blank" rel="noopener">Open the live demo ↗</a>}
-        </div>
-      ) : null}
+      {p.video && <DemoVideo src={p.video} title={p.title} />}
 
       <Architecture slug={p.slug} title={t("system")} />
       <LiveDemo slug={p.slug} />
