@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { View, PerspectiveCamera } from "@react-three/drei";
@@ -12,6 +13,7 @@ import { OrbitScene, SCENE_FOR } from "./TileScenes";
 
 /** Featured projects as tiles, each with a small live 3D scene. One shared WebGL canvas. */
 export default function ProjectTiles() {
+  const xl = useX();
   const root = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const [hot, setHot] = useState<string | null>(null);
@@ -38,10 +40,10 @@ export default function ProjectTiles() {
                 <Scene accent={colors.accent} ink={colors.ink} hot={hot === p.slug} />
               </View>
               <span className="tile3d__body">
-                <b className="tile3d__title">{p.title}</b>
-                <span className="tile3d__tag">{p.tagline}</span>
-                {p.metrics?.[0] && <span className="tile3d__metric tabular">{p.metrics[0].value} <small>{p.metrics[0].label}</small></span>}
-                <span className="tile3d__meta">{repoUrl(p) ? "Code public" : "Code private"}{p.demo ? " · Live demo" : ""}</span>
+                <b className="tile3d__title">{xl(p.title)}</b>
+                <span className="tile3d__tag">{xl(p.tagline)}</span>
+                {p.metrics?.[0] && <span className="tile3d__metric tabular">{xl(p.metrics[0].value)} <small>{xl(p.metrics[0].label)}</small></span>}
+                <span className="tile3d__meta">{repoUrl(p) ? xl("Code public") : xl("Code private")}{p.demo ? xl(" · Live demo") : ""}</span>
               </span>
             </Link>
           );

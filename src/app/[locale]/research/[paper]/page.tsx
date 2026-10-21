@@ -1,3 +1,4 @@
+import { getX, tx, fill } from "@/i18n/x/server";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -18,10 +19,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: P) {
   const { locale, paper } = await params;
   const p = find(paper);
-  return p ? meta(`${p.title} (${p.venue}, ${p.year})`, `${p.title}: paper by Raktim Chandra on ${p.area.toLowerCase()}, ${p.venue}, ${p.year}.`, `/research/${paper}`, locale) : {};
+  if (!p) return {};
+  const desc = fill(tx(locale, "{title}: a paper by Raktim Chandra on {area}, {venue}, {year}."), { title: p.title, area: tx(locale, p.area), venue: tx(locale, p.venue), year: p.year });
+  return meta(`${p.title} (${tx(locale, p.venue)}, ${p.year})`, desc, `/research/${paper}`, locale);
 }
 
 export default async function PaperPage({ params }: P) {
+  const xl = await getX();
   const { locale, paper } = await params;
   setRequestLocale(locale);
   const p = find(paper);
@@ -35,32 +39,32 @@ export default async function PaperPage({ params }: P) {
     <div className="page wrap">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <header className="page-head">
-        <p className="crumbs"><Link href="/research" className="link-u">Research</Link> · {p.area}</p>
-        <h1 className="page-title display">{p.title}</h1>
-        <p className="page-lede">{p.venue}, {p.year}.</p>
+        <p className="crumbs"><Link href="/research" className="link-u">{xl("Research")}</Link> · {xl(p.area)}</p>
+        <h1 className="page-title display">{xl(p.title)}</h1>
+        <p className="page-lede">{xl(p.venue)}, {xl(p.year)}.</p>
       </header>
       <div className="case">
         <div className="prose">
-          {abs ? <><h2>Abstract</h2><p>{abs}</p></> : <p className="text-lead">{p.title} is a paper on {p.area.toLowerCase()}, presented at an {p.venue} in {p.year}.</p>}
+          {abs ? <><h2>{xl("Abstract")}</h2><p>{xl(abs)}</p></> : <p className="text-lead">{xl.f("{title}: a paper on {area}, presented at an {venue} in {year}.", { title: p.title, area: xl(p.area), venue: xl(p.venue), year: p.year })}</p>}
           {rel && (
             <>
-              <h2>The code</h2>
-              <p>The system behind this paper is on the site: <Link href={`/work/${rel}`} className="link-u">read the case study</Link>.</p>
+              <h2>{xl("The code")}</h2>
+              <p>{xl("The system behind this paper is on the site:")}{" "}<Link href={`/work/${rel}`} className="link-u">{xl("read the case study")}</Link>.</p>
             </>
           )}
-          <h2>Cite</h2>
+          <h2>{xl("Cite")}</h2>
           <pre className="bib"><code>{bib}</code></pre>
-          <p><CopyButton text={bib} label="Copy BibTeX" /></p>
-          {!href && <p className="text-small muted">The full citation (pages, DOI) is added once the paper is indexed.</p>}
+          <p><CopyButton text={bib} label={xl("Copy BibTeX")} /></p>
+          {!href && <p className="text-small muted">{xl("The full citation (pages, DOI) is added once the paper is indexed.")}</p>}
         </div>
-        <aside className="case__aside panel" style={{ padding: "1.4rem" }} data-title="Paper">
+        <aside className="case__aside panel" style={{ padding: "1.4rem" }} data-title={xl("Paper")}>
           <dl className="side-facts">
-            <div><dt className="muted text-small">Venue</dt><dd>{p.venue}</dd></div>
-            <div><dt className="muted text-small">Year</dt><dd className="tabular">{p.year}</dd></div>
-            <div><dt className="muted text-small">Area</dt><dd>{p.area}</dd></div>
-            <div><dt className="muted text-small">Co-authors across the papers</dt><dd>{research.coauthors}</dd></div>
+            <div><dt className="muted text-small">{xl("Venue")}</dt><dd>{xl(p.venue)}</dd></div>
+            <div><dt className="muted text-small">{xl("Year")}</dt><dd className="tabular">{xl(p.year)}</dd></div>
+            <div><dt className="muted text-small">{xl("Area")}</dt><dd>{xl(p.area)}</dd></div>
+            <div><dt className="muted text-small">{xl("Co-authors across the papers")}</dt><dd>{xl(research.coauthors)}</dd></div>
           </dl>
-          {href ? <a className="btn" href={href} target="_blank" rel="noopener">Read on IEEE Xplore ↗</a> : null}
+          {href ? <a className="btn" href={href} target="_blank" rel="noopener">{xl("Read on IEEE Xplore ↗")}</a> : null}
         </aside>
       </div>
     </div>

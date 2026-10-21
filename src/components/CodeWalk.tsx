@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import data from "@/content/walkthroughs.json";
 import { track } from "@/lib/analytics";
@@ -25,6 +26,7 @@ function paint(line: string, py: boolean) {
 }
 
 export default function CodeWalk({ slug }: { slug: string }) {
+  const xl = useX();
   const w = useMemo(() => (data as Walk[]).find((x) => x.slug === slug), [slug]);
   const [i, setI] = useState(0);
   const pre = useRef<HTMLDivElement>(null);
@@ -47,16 +49,16 @@ export default function CodeWalk({ slug }: { slug: string }) {
   return (
     <section className="cw" aria-labelledby="cw-h">
       <header className="cw__head">
-        <h2 id="cw-h">Code walkthrough: {w.title}</h2>
-        <p className="text-small muted"><code>{w.file}</code> at <code>{w.sha.slice(0, 7)}</code>, copied from the public repo, unedited.</p>
+        <h2 id="cw-h">{xl("Code walkthrough:")}{" "}{xl(w.title)}</h2>
+        <p className="text-small muted"><code>{w.file}</code> @ <code>{w.sha.slice(0, 7)}</code> · {xl("copied from the public repo, unedited.")}</p>
       </header>
       <div className="cw__body">
         <ol className="cw__steps">
           {w.steps.map((s, k) => (
             <li key={k}>
               <button type="button" className="cw__step" aria-current={k === i || undefined} onClick={() => go(k)}>
-                <span className="tabular cw__lines">L{s.from}–{s.to}</span>
-                <span>{s.note}</span>
+                <span className="tabular cw__lines">L{xl(s.from)}–{xl(s.to)}</span>
+                <span>{xl(s.note)}</span>
               </button>
             </li>
           ))}
@@ -77,10 +79,10 @@ export default function CodeWalk({ slug }: { slug: string }) {
         </div>
       </div>
       <p className="cw__nav">
-        <button type="button" className="btn btn-quiet" disabled={i === 0} onClick={() => go(i - 1)}>← Previous</button>
-        <span className="tabular text-small muted">{i + 1} / {w.steps.length}</span>
-        <button type="button" className="btn btn-quiet" disabled={i === w.steps.length - 1} onClick={() => go(i + 1)}>Next →</button>
-        <a className="link-u text-small" href={gh} target="_blank" rel="noopener">These lines on GitHub ↗</a>
+        <button type="button" className="btn btn-quiet" disabled={i === 0} onClick={() => go(i - 1)}>{xl("← Previous")}</button>
+        <span className="tabular text-small muted">{i + 1} / {xl(w.steps.length)}</span>
+        <button type="button" className="btn btn-quiet" disabled={i === w.steps.length - 1} onClick={() => go(i + 1)}>{xl("Next →")}</button>
+        <a className="link-u text-small" href={gh} target="_blank" rel="noopener">{xl("These lines on GitHub ↗")}</a>
       </p>
     </section>
   );

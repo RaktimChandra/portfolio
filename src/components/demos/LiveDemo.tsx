@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import dynamic from "next/dynamic";
 
 const DEMOS = {
@@ -11,11 +12,12 @@ const DEMOS = {
 export const hasDemo = (slug: string) => slug in DEMOS;
 
 export default function LiveDemo({ slug }: { slug: string }) {
+  const xl = useX();
   const d = DEMOS[slug as keyof typeof DEMOS];
   if (!d) return null;
   return (
-    <section className="live-demo panel" aria-labelledby={`demo-${slug}`} data-title="Live demo">
-      <h2 id={`demo-${slug}`}>{d.title}</h2>
+    <section className="live-demo panel" aria-labelledby={`demo-${slug}`} data-title={xl("Live demo")}>
+      <h2 id={`demo-${slug}`}>{xl(d.title)}</h2>
       <d.C />
     </section>
   );

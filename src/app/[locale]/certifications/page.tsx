@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import PageHead from "@/components/PageHead";
 import CertWall from "@/components/CertWall";
 import { certifications, links } from "@/content/record";
@@ -10,24 +11,25 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function Certifications({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   const groups = [...new Set(certifications.map((c) => c.group))];
   return (
     <div className="page wrap">
-      <PageHead title="Certifications" lede={`${certifications.length} completed, across cloud, AI, data, development and security.`} />
+      <PageHead title={xl("Certifications")} lede={xl.f("{n} completed, across cloud, AI, data, development and security.", { n: certifications.length })} />
       <CertWall />
-      <h2 className="sec-title display" style={{ marginTop: "3rem" }}>The list</h2>
+      <h2 className="sec-title display" style={{ marginTop: "3rem" }}>{xl("The list")}</h2>
       {groups.map((g) => (
         <section key={g} className="section" style={{ paddingBlock: "1.5rem" }}>
-          <h2 className="text-lead" style={{ fontWeight: 650, marginBottom: "1rem" }}>{g}</h2>
+          <h2 className="text-lead" style={{ fontWeight: 650, marginBottom: "1rem" }}>{xl(g)}</h2>
           <ul className="card-grid" style={{ listStyle: "none", padding: 0 }}>
             {certifications.filter((c) => c.group === g).map((c) => {
               const href = links.cert[c.name];
               return (
                 <li key={c.name} className="card panel" data-title={c.issuer} data-reveal>
-                  <p className="card__meta">{c.issuer}</p>
-                  <p className="card__title" style={{ fontSize: "1.1rem" }}>{c.name}</p>
-                  {href ? <a className="link-u text-small" href={href} target="_blank" rel="noopener">Verify ↗</a> : null}
+                  <p className="card__meta">{xl(c.issuer)}</p>
+                  <p className="card__title" style={{ fontSize: "1.1rem" }}>{xl(c.name)}</p>
+                  {href ? <a className="link-u text-small" href={href} target="_blank" rel="noopener">{xl("Verify ↗")}</a> : null}
                 </li>
               );
             })}

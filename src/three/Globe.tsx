@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -55,6 +56,7 @@ function Pin({ p, color, label, hot, onHover, size = 0.05 }: { p: THREE.Vector3;
 }
 
 export default function Globe() {
+  const xl = useX();
   const ink = useMemo(() => cssColor("--ink", "#f2f2f2"), []);
   const accent = useMemo(() => cssColor("--accent", "#b08f74"), []);
   const [countries, setCountries] = useState<{ cc: string; v: number }[]>([]);
@@ -88,7 +90,7 @@ export default function Globe() {
         <OrbitControls enablePan={false} enableZoom={false} enableDamping autoRotate={!hot} autoRotateSpeed={0.5} />
       </Canvas>
       <p className="globe__note" aria-live="polite">
-        {hp ? <><b>{hp.name}</b> · {hp.note}</> : hc ? <><b>{CENTROID[hc.cc][2]}</b> · {hc.v} {hc.v === 1 ? "visitor" : "visitors"} in 90 days</> : live && total ? `Pins: where I've studied and worked. Dots: ${total} visitors from ${visitors.length} ${visitors.length === 1 ? "country" : "countries"} in the last 90 days.` : "Pins: where I've studied and worked. Drag to spin."}
+        {hp ? <><b>{xl(hp.name)}</b> · {xl(hp.note)}</> : hc ? <><b>{xl(CENTROID[hc.cc][2])}</b> · {xl.f(hc.v === 1 ? "{n} visitor in 90 days" : "{n} visitors in 90 days", { n: hc.v })}</> : live && total ? xl.f(visitors.length === 1 ? "Pins: where I've studied and worked. Dots: {n} visitors from {c} country in the last 90 days." : "Pins: where I've studied and worked. Dots: {n} visitors from {c} countries in the last 90 days.", { n: total, c: visitors.length }) : xl("Pins: where I've studied and worked. Drag to spin.")}
       </p>
     </div>
   );

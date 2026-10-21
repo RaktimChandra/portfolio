@@ -1,15 +1,17 @@
+import { getX } from "@/i18n/x/server";
 import { Link } from "@/i18n/navigation";
 
-export default function PageHead({ title, lede, crumb, children }: { title: string; lede?: React.ReactNode; crumb?: { href: string; label: string }; children?: React.ReactNode }) {
+export default async function PageHead({ title, lede, crumb, children }: { title: string; lede?: React.ReactNode; crumb?: { href: string; label: string }; children?: React.ReactNode }) {
+  const xl = await getX();
   return (
     <header className="page-head">
       {crumb && (
         <p className="crumbs">
-          <Link href={crumb.href} className="link-u">← {crumb.label}</Link>
+          <Link href={crumb.href} className="link-u">← {xl(crumb.label)}</Link>
         </p>
       )}
-      <h1 className="page-title display" data-reveal style={{ ["--len" as string]: Math.max(6, ...title.split(/\s+/).map((w) => w.length)) }}>{title}</h1>
-      {lede && <div className="page-lede" data-reveal style={{ ["--i" as string]: 1 }}>{lede}</div>}
+      <h1 className="page-title display" data-reveal style={{ ["--len" as string]: Math.max(6, ...title.split(/\s+/).map((w) => w.length)) }}>{xl(title)}</h1>
+      {lede && <div className="page-lede" data-reveal style={{ ["--i" as string]: 1 }}>{xl(lede)}</div>}
       {children}
     </header>
   );

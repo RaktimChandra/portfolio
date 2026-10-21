@@ -24,7 +24,7 @@ export function planFor(kinds: string[], size: string) {
   const hi = Math.round(weeks * 1.25);
   const milestones = [
     { w: 1, t: "Discovery call, written scope, designs or data audit" },
-    { w: Math.max(2, Math.round(weeks * 0.4)), t: `First working version of the core flow (${ks.map((k) => k.label.toLowerCase()).join(", ")})` },
+    { w: Math.max(2, Math.round(weeks * 0.4)), t: "First working version of the core flow ({kinds})", kinds: ks.map((k) => k.label) },
     { w: Math.max(3, Math.round(weeks * 0.8)), t: "Feature-complete on a preview link, with tests" },
     { w: hi, t: "Launch, handover documents and a support window" },
   ];

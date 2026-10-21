@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import dynamic from "next/dynamic";
 import { architecture } from "@/content/architecture";
 import { useCaps } from "@/lib/device";
@@ -8,17 +9,18 @@ const Arch3D = dynamic(() => import("@/three/Arch3D"), { ssr: false });
 
 /** A case study's system as a 3D graph, with the same structure as a plain list underneath for readers and crawlers. */
 export default function Architecture({ slug, title }: { slug: string; title: string }) {
+  const xl = useX();
   const arch = architecture[slug];
   const gl = useCaps().rich;
   if (!arch) return null;
   const byId = Object.fromEntries(arch.nodes.map((n) => [n.id, n.label]));
   return (
     <section className="arch" aria-labelledby="arch-h">
-      <h2 id="arch-h">{title}</h2>
-      <p className="muted">{arch.caption}</p>
+      <h2 id="arch-h">{xl(title)}</h2>
+      <p className="muted">{xl(arch.caption)}</p>
       {gl && <Arch3D arch={arch} />}
       <ol className={gl ? "sr-only" : "arch__list"}>
-        {arch.edges.map(([a, b], i) => <li key={i}>{byId[a]} → {byId[b]}</li>)}
+        {arch.edges.map(([a, b], i) => <li key={i}>{xl(byId[a])} → {xl(byId[b])}</li>)}
       </ol>
     </section>
   );

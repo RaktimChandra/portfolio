@@ -647,3 +647,4 @@ main { overflow-x: clip; }
 .gb__note p + p { margin-top: 0.4rem; }
 .gb__form { position: relative; }
 .arcard__flat { display: grid; gap: 0.3rem; place-content: center; height: 100%; margin: 0; padding: 1.5rem; border-radius: 10px; background: #121212; color: #f4f1ea; } .arcard__flat b { font-size: 1.6rem; letter-spacing: 0.02em; }
+.site-footer__keys { display: inline-flex; flex-wrap: wrap; gap: 0.3rem 0.9rem; }

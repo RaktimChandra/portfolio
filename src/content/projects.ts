@@ -837,10 +837,19 @@ const allProjects: Project[] = [
 export const projects = allProjects.filter((p) => !p.draft);
 
 export const factsFor = (p: Project) => (p.repo ? repoFacts[p.repo] : undefined);
-export function factLine(p: Project) {
+type Fx = ((s: string) => string) & { f: (t: string, v: Record<string, string | number>) => string; locale: string };
+const plain: Fx = Object.assign((s: string) => s, { f: (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k) => String(v[k])), locale: "en" });
+export function factLine(p: Project, xl: Fx = plain) {
   const f = factsFor(p);
   if (!f) return "";
-  return [`${f.loc.toLocaleString("en-IN")} lines of ${f.langs[0]}${f.langs[1] ? `, ${f.langs[1]}` : ""}`, f.tests ? `${f.tests} tests` : "", f.workflows ? `${f.workflows} CI workflow${f.workflows > 1 ? "s" : ""}` : "", f.commits > 5 ? `${f.commits} commits` : "", f.docker ? "Dockerised" : ""].filter(Boolean).join(" · ");
+  const loc = f.loc.toLocaleString(xl.locale === "en" ? "en-IN" : `${xl.locale}-IN`);
+  return [
+    xl.f("{n} lines of {langs}", { n: loc, langs: f.langs.slice(0, 2).join(", ") }),
+    f.tests ? xl.f("{n} tests", { n: f.tests }) : "",
+    f.workflows ? xl.f(f.workflows > 1 ? "{n} CI workflows" : "{n} CI workflow", { n: f.workflows }) : "",
+    f.commits > 5 ? xl.f("{n} commits", { n: f.commits }) : "",
+    f.docker ? xl("Dockerised") : "",
+  ].filter(Boolean).join(" · ");
 }
 
 export const featured = projects.filter((p) => p.featured).sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99));

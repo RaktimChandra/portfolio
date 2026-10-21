@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
+import { XProvider } from "@/i18n/x/client";
+import { clientDict } from "@/i18n/x/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -82,6 +84,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       <body>
         <a href="#main" className="skip btn">{t("skip")}</a>
         <NextIntlClientProvider>
+          <XProvider dict={clientDict(locale)} locale={locale}>
           <Providers>
             <RealityCanvas />
             <Header />
@@ -90,6 +93,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <Overlays />
             <PageTransition />
           </Providers>
+          </XProvider>
         </NextIntlClientProvider>
         {process.env.VERCEL && (
           <>

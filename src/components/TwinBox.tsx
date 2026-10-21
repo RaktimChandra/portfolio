@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -23,6 +24,7 @@ const hasSpeechInput = () => {
 
 /** The AI twin. `variant="headline"` is the large type input on the home page. */
 export default function TwinBox({ variant = "panel", initial = "" }: { variant?: "panel" | "headline"; initial?: string }) {
+  const xl = useX();
   const t = useTranslations("home");
   const [value, setValue] = useState("");
   const [items, setItems] = useState<QA[]>([]);
@@ -156,7 +158,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
         <input
           id={`twin-${variant}`}
           className={variant === "headline" ? "twin__input display" : "twin__input"}
-          placeholder={listening ? "Listening…" : t("twinPlaceholder")}
+          placeholder={listening ? xl("Listening…") : t("twinPlaceholder")}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           autoComplete="off"
@@ -165,20 +167,20 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
           autoFocus={variant === "panel"}
         />
         {canVoice && (
-          <button type="button" className={`chip chip--icon twin__mic ${listening ? "is-on" : ""}`} onClick={listen} aria-pressed={listening} aria-label={listening ? "Stop listening" : "Ask by voice"} title="Ask by voice">
+          <button type="button" className={`chip chip--icon twin__mic ${listening ? "is-on" : ""}`} onClick={listen} aria-pressed={listening} aria-label={listening ? xl("Stop listening") : xl("Ask by voice")} title={xl("Ask by voice")}>
             <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" /></svg>
           </button>
         )}
         {canVoice && (
-          <button type="button" className={`chip twin__talk ${talk ? "is-on" : ""}`} onClick={talk ? stopTalk : startTalk} aria-pressed={talk} title="Talk to the twin hands-free">
-            {talk ? "End talk" : "Talk"}
+          <button type="button" className={`chip twin__talk ${talk ? "is-on" : ""}`} onClick={talk ? stopTalk : startTalk} aria-pressed={talk} title={xl("Talk to the twin hands-free")}>
+            {talk ? xl("End talk") : xl("Talk")}
           </button>
         )}
-        <button type="button" className="chip chip--icon" onClick={() => { setSpeakOn((s) => !s); stopSpeaking(); }} aria-pressed={speakOn} aria-label={speakOn ? "Stop reading answers aloud" : "Read answers aloud"} title="Read answers aloud">
+        <button type="button" className="chip chip--icon" onClick={() => { setSpeakOn((s) => !s); stopSpeaking(); }} aria-pressed={speakOn} aria-label={speakOn ? xl("Stop reading answers aloud") : xl("Read answers aloud")} title={xl("Read answers aloud")}>
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />{speakOn && <path d="M16 8a5 5 0 0 1 0 8M18.5 5.5a8.5 8.5 0 0 1 0 13" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />}</svg>
         </button>
-        <button type="submit" className="btn" disabled={busy || !value.trim()} aria-label="Ask">
-          {busy ? "…" : "Ask"}
+        <button type="submit" className="btn" disabled={busy || !value.trim()} aria-label={xl("Ask")}>
+          {busy ? "…" : xl("Ask")}
         </button>
       </form>
 
@@ -186,17 +188,17 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
         <div className="twin__orb" data-phase={phase} style={{ ["--lv" as string]: level }} aria-live="polite">
           <span className="twin__orb-ball" aria-hidden="true" />
           <span className="text-small">
-            {phase === "listening" ? "Listening. Ask anything about me." : phase === "thinking" ? "Thinking…" : phase === "speaking" ? "Speaking" : "Ready"}
-            {" · "}<b>AI voice</b>
+            {phase === "listening" ? xl("Listening. Ask anything about me.") : phase === "thinking" ? xl("Thinking…") : phase === "speaking" ? xl("Speaking") : xl("Ready")}
+            {" · "}<b>{xl("AI voice")}</b>
           </span>
         </div>
       )}
 
       {!items.length && (
-        <ul className="twin__suggest" aria-label="Suggested questions">
+        <ul className="twin__suggest" aria-label={xl("Suggested questions")}>
           {SUGGEST.map((s) => (
             <li key={s}>
-              <button type="button" className="chip" onClick={() => ask(s)}>{s}</button>
+              <button type="button" className="chip" onClick={() => ask(s)}>{xl(s)}</button>
             </li>
           ))}
         </ul>
@@ -206,10 +208,10 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
         <div ref={scroller} className="twin__log" aria-live="polite">
           {items.map((it, i) => (
             <div key={i} className="twin__qa">
-              <p className="twin__q">{it.q}</p>
+              <p className="twin__q">{xl(it.q)}</p>
               {it.a ? (
                 <div className={`twin__a ${it.err ? "is-err" : ""}`}>
-                  {it.a.slice(0, it.shown ?? it.a.length).split("\n\n").map((p, j) => <p key={j}>{p}</p>)}
+                  {it.a.slice(0, it.shown ?? it.a.length).split("\n\n").map((p, j) => <p key={j}>{xl(p)}</p>)}
                   {(it.shown ?? 0) >= it.a.length && !!it.projects?.length && (
                     <div className="twin__cards">
                       {it.projects.slice(0, 3).map((slug) => {
@@ -217,9 +219,9 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
                         if (!p) return null;
                         return (
                           <Link key={slug} href={`/work/${slug}`} className="twin__card" onClick={() => useUI.getState().close()}>
-                            <b>{p.title}</b>
-                            <span>{p.tagline}</span>
-                            {p.metrics?.[0] && <em className="tabular">{p.metrics[0].value} <small>{p.metrics[0].label}</small></em>}
+                            <b>{xl(p.title)}</b>
+                            <span>{xl(p.tagline)}</span>
+                            {p.metrics?.[0] && <em className="tabular">{xl(p.metrics[0].value)} <small>{xl(p.metrics[0].label)}</small></em>}
                           </Link>
                         );
                       })}
@@ -227,26 +229,26 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
                   )}
                   {(it.shown ?? 0) >= it.a.length && !!it.sources?.length && (
                     <p className="twin__src text-small">
-                      Sources:{" "}
+                      {xl("Sources:")}{" "}
                       {it.sources.map((s, k) => (
                         <span key={s.href + k}>
-                          <Link href={s.href} className="link-u" onClick={() => useUI.getState().close()}>{s.title}</Link>
+                          <Link href={s.href} className="link-u" onClick={() => useUI.getState().close()}>{xl(s.title)}</Link>
                           {k < it.sources!.length - 1 ? ", " : ""}
                         </span>
                       ))}
-                      {it.mode === "llm" ? " · written by the model from these" : ""}
+                      {it.mode === "llm" ? xl(" · written by the model from these") : ""}
                     </p>
                   )}
                 </div>
               ) : (
-                <p className="twin__a twin__thinking" aria-label="Thinking"><span /><span /><span /></p>
+                <p className="twin__a twin__thinking" aria-label={xl("Thinking")}><span /><span /><span /></p>
               )}
             </div>
           ))}
           {last?.a && (last.shown ?? 0) >= last.a.length && !!last.followups?.length && (
-            <ul className="twin__suggest" aria-label="Follow-up questions">
+            <ul className="twin__suggest" aria-label={xl("Follow-up questions")}>
               {last.followups.map((s) => (
-                <li key={s}><button type="button" className="chip" onClick={() => ask(s)}>{s}</button></li>
+                <li key={s}><button type="button" className="chip" onClick={() => ask(s)}>{xl(s)}</button></li>
               ))}
             </ul>
           )}

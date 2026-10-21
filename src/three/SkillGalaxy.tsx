@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -80,6 +81,7 @@ function Galaxy({ nodes, onPick, picked }: { nodes: Node[]; onPick: (n: Node | n
 }
 
 export default function SkillGalaxy() {
+  const xl = useX();
   const nodes = useNodes();
   const [picked, setPicked] = useState<Node | null>(null);
   const [live, setLive] = useState(true);
@@ -91,7 +93,7 @@ export default function SkillGalaxy() {
   }, []);
   const used = picked ? projects.filter((p) => p.stack.some((x) => x.toLowerCase().includes(picked.name.toLowerCase().split(" ")[0]))).slice(0, 6) : [];
   return (
-    <div ref={wrap} className="constellation panel galaxy" data-title="Skill galaxy">
+    <div ref={wrap} className="constellation panel galaxy" data-title={xl("Skill galaxy")}>
       <Canvas frameloop={live ? "always" : "never"} camera={{ position: [0, 0, 8.6], fov: 50 }} dpr={[1, 1.6]} onPointerMissed={() => setPicked(null)}>
         <ambientLight intensity={0.8} />
         <Galaxy nodes={nodes} onPick={setPicked} picked={picked} />
@@ -100,14 +102,14 @@ export default function SkillGalaxy() {
       <div className="constellation__label" style={{ pointerEvents: picked ? "auto" : "none" }}>
         {picked ? (
           <>
-            <p className="display">{picked.name}</p>
+            <p className="display">{xl(picked.name)}</p>
             <p className="text-small">
-              <span style={{ color: picked.color }}>{picked.group}</span>
-              {used.length ? <> · used in {used.map((p, i) => <span key={p.slug}><Link className="link-u" href={`/work/${p.slug}`}>{p.title}</Link>{i < used.length - 1 ? ", " : ""}</span>)}</> : " · used at work and in coursework"}
+              <span style={{ color: picked.color }}>{xl(picked.group)}</span>
+              {used.length ? <> · {xl("used in")}{" "}{used.map((p, i) => <span key={p.slug}><Link className="link-u" href={`/work/${p.slug}`}>{xl(p.title)}</Link>{i < used.length - 1 ? ", " : ""}</span>)}</> : xl(" · used at work and in coursework")}
             </p>
           </>
         ) : (
-          <p className="text-small muted">Drag to turn, scroll to zoom. Each colour is a group; bigger labels appear in more projects. Click a skill to see where it was used.</p>
+          <p className="text-small muted">{xl("Drag to turn, scroll to zoom. Each colour is a group; bigger labels appear in more projects. Click a skill to see where it was used.")}</p>
         )}
       </div>
     </div>

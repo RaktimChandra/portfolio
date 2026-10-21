@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
@@ -9,6 +10,7 @@ import { useCaps } from "@/lib/device";
 const JourneyScene = dynamic(() => import("@/three/JourneyScene"), { ssr: false });
 
 export default function Journey() {
+  const xl = useX();
   const section = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const [i, setI] = useState(0);
@@ -38,22 +40,22 @@ export default function Journey() {
           <div className="journey__stage">
             <JourneyScene progress={progress} />
             <div className="journey__hud" aria-live="polite">
-              <p className="text-small" style={{ color: KIND_COLOR[m.kind] }}>{String(i + 1).padStart(2, "0")} / {journey.length} · {m.when}</p>
-              <p className="journey__title display">{m.title}</p>
+              <p className="text-small" style={{ color: KIND_COLOR[m.kind] }}>{String(i + 1).padStart(2, "0")} / {xl(journey.length)} · {xl(m.when)}</p>
+              <p className="journey__title display">{xl(m.title)}</p>
               <div className="journey__bar"><span style={{ width: `${((i + 1) / journey.length) * 100}%` }} /></div>
-              <p className="text-small journey__hint">Scroll to fly through the years</p>
+              <p className="text-small journey__hint">{xl("Scroll to fly through the years")}</p>
             </div>
           </div>
         </div>
       )}
       <section className="wrap section" aria-labelledby="tl-h">
-        <h2 id="tl-h" className="sec-title display" style={{ marginBottom: "2rem" }}>The whole timeline</h2>
+        <h2 id="tl-h" className="sec-title display" style={{ marginBottom: "2rem" }}>{xl("The whole timeline")}</h2>
         <ol className="timeline">
           {journey.map((x, n) => (
             <li key={n} className="timeline__item">
-              <p className="timeline__when tabular" style={{ color: KIND_COLOR[x.kind] }}>{x.when}</p>
-              <h3 className="timeline__role">{x.href ? <Link href={x.href} className="link-u">{x.title}</Link> : x.title}</h3>
-              <p>{x.line}</p>
+              <p className="timeline__when tabular" style={{ color: KIND_COLOR[x.kind] }}>{xl(x.when)}</p>
+              <h3 className="timeline__role">{x.href ? <Link href={x.href} className="link-u">{xl(x.title)}</Link> : xl(x.title)}</h3>
+              <p>{xl(x.line)}</p>
             </li>
           ))}
         </ol>

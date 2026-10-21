@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -29,6 +30,7 @@ function layout(arch: Arch, vertical = false) {
 }
 
 function Node({ n, p, accent, hot, onHover }: { n: ArchNode; p: THREE.Vector3; accent: THREE.Color; hot: boolean; onHover: (id: string | null) => void }) {
+  const xl = useX();
   const ref = useRef<THREE.Group>(null);
   const { tex, aspect } = useMemo(() => labelTexture(n.label, { size: 40 }), [n.label]);
   const shape = KIND_SHAPE[n.kind ?? "model"];
@@ -47,7 +49,7 @@ function Node({ n, p, accent, hot, onHover }: { n: ArchNode; p: THREE.Vector3; a
         {shape === "oct" && <octahedronGeometry args={[0.3]} />}
         {shape === "sphere" && <icosahedronGeometry args={[0.27, 1]} />}
         {shape === "slab" && <boxGeometry args={[0.5, 0.32, 0.1]} />}
-        {mat}
+        {xl(mat)}
       </mesh>
       <sprite position={[0, -0.48, 0]} scale={[0.3 * aspect, 0.3, 1]}>
         <spriteMaterial map={tex} transparent depthWrite={false} />
@@ -103,6 +105,7 @@ function Fit({ pos }: { pos: Map<string, THREE.Vector3> }) {
 }
 
 export default function Arch3D({ arch }: { arch: Arch }) {
+  const xl = useX();
   const accent = useMemo(() => cssColor("--accent", "#b08f74"), []);
   const [hot, setHot] = useState<string | null>(null);
   const [live, setLive] = useState(true);
@@ -134,7 +137,7 @@ export default function Arch3D({ arch }: { arch: Arch }) {
         {arch.nodes.map((n) => <Node key={n.id} n={n} p={pos.get(n.id)!} accent={accent} hot={hot === n.id} onHover={setHot} />)}
         <OrbitControls enablePan={false} enableZoom={false} enableDamping target={center} minPolarAngle={Math.PI * 0.32} maxPolarAngle={Math.PI * 0.68} minAzimuthAngle={-0.7} maxAzimuthAngle={0.7} />
       </Canvas>
-      <p className="arch3d__note" aria-live="polite">{node ? <><b>{node.label}</b>{node.note ? ` · ${node.note}` : ""}</> : "Drag to turn it. Hover a part for what it does."}</p>
+      <p className="arch3d__note" aria-live="polite">{node ? <><b>{xl(node.label)}</b>{node.note ? ` · ${node.note}` : ""}</> : xl("Drag to turn it. Hover a part for what it does.")}</p>
     </div>
   );
 }

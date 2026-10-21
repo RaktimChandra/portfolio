@@ -1,19 +1,21 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useState } from "react";
 import { profile } from "@/content/profile";
 
 type Data = { ok: boolean; recent?: { repo: string; what: string; at: string; type: string }[]; days?: Record<string, number> };
 
-function ago(iso: string) {
+function ago(iso: string, f: (t: string, v: Record<string, number>) => string) {
   const s = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (s < 3600) return `${Math.max(1, Math.round(s / 60))} min ago`;
-  if (s < 86400) return `${Math.round(s / 3600)} h ago`;
-  return `${Math.round(s / 86400)} d ago`;
+  if (s < 3600) return f("{n} min ago", { n: Math.max(1, Math.round(s / 60)) });
+  if (s < 86400) return f("{n} h ago", { n: Math.round(s / 3600) });
+  return f("{n} d ago", { n: Math.round(s / 86400) });
 }
 
 /** Live: what Raktim pushed to GitHub recently. Hidden if GitHub can't be reached. */
 export default function GitHubPulse() {
+  const xl = useX();
   const [d, setD] = useState<Data | null>(null);
   useEffect(() => {
     fetch("/api/github").then((r) => r.json()).then(setD).catch(() => setD({ ok: false }));
@@ -29,10 +31,10 @@ export default function GitHubPulse() {
   return (
     <section className="section wrap pulse" aria-labelledby="pulse-h">
       <div className="pulse__head">
-        <h2 id="pulse-h" className="sec-title display">Right now.</h2>
-        <p className="sec-note">Live from GitHub: {total} public contributions in the last six weeks. Last activity {ago(d.recent[0].at)}.</p>
+        <h2 id="pulse-h" className="sec-title display">{xl("Right now.")}</h2>
+        <p className="sec-note">{xl.f("Live from GitHub: {n} public contributions in the last six weeks. Last activity {ago}.", { n: total, ago: ago(d.recent[0].at, xl.f) })}</p>
       </div>
-      <div className="pulse__grid" role="img" aria-label={`Activity over the last 42 days, ${total} contributions`}>
+      <div className="pulse__grid" role="img" aria-label={xl.f("Activity over the last 42 days, {n} contributions", { n: total })}>
         {cells.map((c) => (
           <span key={c.day} title={`${c.day}: ${c.n}`} style={{ ["--v" as string]: c.n ? 0.25 + (c.n / max) * 0.75 : 0.06 }} />
         ))}
@@ -40,9 +42,9 @@ export default function GitHubPulse() {
       <ul className="pulse__list">
         {d.recent.slice(0, 5).map((e, i) => (
           <li key={i}>
-            <a className="link-u" href={`${profile.github}/${e.repo}`} target="_blank" rel="noopener">{e.repo}</a>
-            <span className="muted"> · {e.what}</span>
-            <span className="muted tabular pulse__ago">{ago(e.at)}</span>
+            <a className="link-u" href={`${profile.github}/${e.repo}`} target="_blank" rel="noopener">{xl(e.repo)}</a>
+            <span className="muted"> · {xl(e.what)}</span>
+            <span className="muted tabular pulse__ago">{ago(e.at, xl.f)}</span>
           </li>
         ))}
       </ul>

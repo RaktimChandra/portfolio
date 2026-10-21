@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
@@ -250,6 +251,7 @@ const SPOTS: Record<string, Hot> = {
 };
 
 export default function Room() {
+  const xl = useX();
   const router = useRouter();
   const [hot, setHot] = useState<string | null>(null);
   const [live, setLive] = useState(true);
@@ -274,9 +276,9 @@ export default function Room() {
         <pointLight position={[-2, 2.5, 1]} intensity={6} distance={8} color="#8fb3ff" />
         <Scene hot={hot} setHot={setHot} go={go} />
       </Canvas>
-      <p className="room__label" aria-live="polite">{cur ? cur.label : "My desk. Click anything."}</p>
-      <nav className="sr-only" aria-label="Room shortcuts">
-        {Object.values(SPOTS).filter((s) => s.href).map((s) => <a key={s.id} href={s.href}>{s.label}</a>)}
+      <p className="room__label" aria-live="polite">{cur ? xl(cur.label) : xl("My desk. Click anything.")}</p>
+      <nav className="sr-only" aria-label={xl("Room shortcuts")}>
+        {Object.values(SPOTS).filter((s) => s.href).map((s) => <a key={s.id} href={s.href}>{xl(s.label)}</a>)}
       </nav>
     </div>
   );

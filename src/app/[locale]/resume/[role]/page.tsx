@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import PageHead from "@/components/PageHead";
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: P) {
 }
 
 export default async function RoleResume({ params }: P) {
+  const xl = await getX();
   const { locale, role } = await params;
   setRequestLocale(locale);
   const r = getRoleCV(role);
@@ -27,14 +29,14 @@ export default async function RoleResume({ params }: P) {
   return (
     <div className="page wrap">
       <div className="no-print">
-        <PageHead title={`Résumé: ${r.title}`} lede="The same record as the main résumé, ordered for this role: the projects that matter most come first and the relevant skills are marked.">
+        <PageHead title={`Résumé: ${r.title}`} lede={xl("The same record as the main résumé, ordered for this role: the projects that matter most come first and the relevant skills are marked.")}>
           <p style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <a href={`/resume-${r.slug}.pdf`} className="btn" download={`Raktim-Chandra-Resume-${r.slug.toUpperCase()}.pdf`}>Download PDF</a>
+            <a href={`/resume-${r.slug}.pdf`} className="btn" download={`Raktim-Chandra-Resume-${r.slug.toUpperCase()}.pdf`}>{xl("Download PDF")}</a>
             <PrintButton />
-            <Link href="/resume" className="btn btn-quiet">Main résumé</Link>
+            <Link href="/resume" className="btn btn-quiet">{xl("Main résumé")}</Link>
           </p>
-          <nav className="role-tabs" aria-label="Other versions">
-            {roleCVs.map((x) => <Link key={x.slug} href={`/resume/${x.slug}`} className="chip" aria-current={x.slug === r.slug ? "page" : undefined}>{x.title}</Link>)}
+          <nav className="role-tabs" aria-label={xl("Other versions")}>
+            {roleCVs.map((x) => <Link key={x.slug} href={`/resume/${x.slug}`} className="chip" aria-current={x.slug === r.slug ? "page" : undefined}>{xl(x.title)}</Link>)}
           </nav>
         </PageHead>
       </div>

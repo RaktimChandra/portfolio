@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import PageHead from "@/components/PageHead";
 import ForForm from "@/components/ForForm";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
@@ -9,10 +10,11 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function For({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   return (
     <div className="page wrap">
-      <PageHead title="Made for your team" lede="Paste your company's website. I read your homepage once, match what you do against everything I've built, and give you a page that leads with what matters to you. Nothing is stored." />
+      <PageHead title={xl("Made for your team")} lede={xl("Paste your company's website. I read your homepage once, match what you do against everything I've built, and give you a page that leads with what matters to you. Nothing is stored.")} />
       <ForForm />
     </div>
   );

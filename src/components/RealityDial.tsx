@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import Modal from "./Modal";
@@ -8,6 +9,7 @@ import { REALITIES } from "@/reality/realities";
 import { blip } from "@/lib/sound";
 
 export default function RealityDial() {
+  const xl = useX();
   const t = useTranslations("chrome");
   const { reality, setReality, close } = useUI();
   const listRef = useRef<HTMLDivElement>(null);
@@ -39,15 +41,15 @@ export default function RealityDial() {
     <Modal label={t("reality")} position="bottom" className="dial">
       <div className="dial__head">
         <div>
-          <p className="text-small muted tabular">{String(i + 1).padStart(2, "0")} / {REALITIES.length}</p>
-          <h2 className="dial__name display">{cur.name}</h2>
-          <p className="dial__note">{cur.note}</p>
+          <p className="text-small muted tabular">{String(i + 1).padStart(2, "0")} / {xl(REALITIES.length)}</p>
+          <h2 className="dial__name display">{xl(cur.name)}</h2>
+          <p className="dial__note">{xl(cur.note)}</p>
         </div>
         <div className="dial__ctrl">
-          <button type="button" className="btn btn-quiet" onClick={() => go(i - 1)} aria-label="Previous reality">←</button>
-          <button type="button" className="btn btn-quiet" onClick={() => go(i + 1)} aria-label="Next reality">→</button>
-          <button type="button" className="btn btn-quiet" onClick={() => go(Math.floor(Math.random() * REALITIES.length))}>Surprise me</button>
-          <button type="button" className="btn" onClick={close}>Keep this one</button>
+          <button type="button" className="btn btn-quiet" onClick={() => go(i - 1)} aria-label={xl("Previous reality")}>←</button>
+          <button type="button" className="btn btn-quiet" onClick={() => go(i + 1)} aria-label={xl("Next reality")}>→</button>
+          <button type="button" className="btn btn-quiet" onClick={() => go(Math.floor(Math.random() * REALITIES.length))}>{xl("Surprise me")}</button>
+          <button type="button" className="btn" onClick={close}>{xl("Keep this one")}</button>
         </div>
       </div>
       <div ref={listRef} className="dial__list" role="radiogroup" aria-label={t("realityHint")}>
@@ -63,13 +65,13 @@ export default function RealityDial() {
           >
             <span className="dial__swatch" aria-hidden="true" style={{ background: r.swatch[0], color: r.swatch[1] }}>
               <span style={{ background: r.swatch[2] }} />
-              <b>Aa</b>
+              <b>{xl("Aa")}</b>
             </span>
-            <span className="dial__label">{r.name}</span>
+            <span className="dial__label">{xl(r.name)}</span>
           </button>
         ))}
       </div>
-      <p className="text-small muted dial__hint">Arrow keys turn the dial. The link in your address bar now opens this reality for anyone you share it with.</p>
+      <p className="text-small muted dial__hint">{xl("Arrow keys turn the dial. The link in your address bar now opens this reality for anyone you share it with.")}</p>
     </Modal>
   );
 }

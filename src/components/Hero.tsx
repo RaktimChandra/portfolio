@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -17,6 +18,7 @@ const PERSONA_LINK: Record<Exclude<Persona, null>, string> = {
 };
 
 export default function Hero() {
+  const xl = useX();
   const t = useTranslations("hero");
   const tp = useTranslations("persona");
   const { persona, setPersona, open } = useUI();
@@ -58,10 +60,10 @@ export default function Hero() {
             // eslint-disable-next-line @next/next/no-img-element
             <img src={profile.avatarSmall} alt="" width={56} height={56} className="hero__avatar" onError={() => setAvatarOk(false)} decoding="async" />
           ) : (
-            <span className="hero__avatar hero__avatar--fallback" aria-hidden="true">RC</span>
+            <span className="hero__avatar hero__avatar--fallback" aria-hidden="true">{xl("RC")}</span>
           )}
           <p className="hero__role">
-            <span className="hero__name">{profile.name}</span>
+            <span className="hero__name">{xl(profile.name)}</span>
             <span className="muted">{t("role")}</span>
           </p>
         </div>
@@ -102,11 +104,11 @@ export default function Hero() {
       <div className="hero__word" aria-hidden="true">
         <div ref={word} className="hero__word-inner display">
           {profile.wordmark.split("").map((c, i) => (
-            <span key={i} style={{ ["--z" as string]: `${(i % 3) * 18 - 18}px` }}>{c}</span>
+            <span key={i} style={{ ["--z" as string]: `${(i % 3) * 18 - 18}px` }}>{xl(c)}</span>
           ))}
         </div>
       </div>
-      <h1 id="hero-title" className="sr-only">{profile.name}, {t("role")}</h1>
+      <h1 id="hero-title" className="sr-only">{xl(profile.name)}, {t("role")}</h1>
     </section>
   );
 }

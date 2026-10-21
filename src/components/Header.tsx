@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
@@ -15,6 +16,7 @@ const LOCALES = [
 ] as const;
 
 export default function Header() {
+  const xl = useX();
   const t = useTranslations("nav");
   const tc = useTranslations("chrome");
   const tp = useTranslations("pages");
@@ -46,11 +48,11 @@ export default function Header() {
     <header className={`site-header no-print ${scrolled ? "is-scrolled" : ""}`}>
       <div className="wrap site-header__row">
         <Link href="/" className="site-header__name" aria-label={`Raktim Chandra, ${t("home")}`}>
-          <span className="site-header__mark" aria-hidden="true">RC</span>
-          <span className="site-header__full">Raktim Chandra</span>
+          <span className="site-header__mark" aria-hidden="true">{xl("RC")}</span>
+          <span className="site-header__full">{xl("Raktim Chandra")}</span>
         </Link>
 
-        <nav aria-label="Primary" className="site-header__nav">
+        <nav aria-label={xl("Primary")} className="site-header__nav">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} className="site-header__link" aria-current={active(n.href) ? "page" : undefined}>
               {t(n.key)}
@@ -66,7 +68,7 @@ export default function Header() {
             title={tc("realityHint")}
           >
             <span className="swatch" aria-hidden="true" style={{ background: `linear-gradient(135deg, ${r.swatch[0]} 0 50%, ${r.swatch[2]} 50%)` }} />
-            <span className="chip__label">{r.name}</span>
+            <span className="chip__label">{xl(r.name)}</span>
             <span className="sr-only">, {tc("reality")}</span>
             <span className="chip__count tabular" aria-hidden="true">{String(idx).padStart(2, "0")}/21</span>
           </button>
@@ -94,7 +96,7 @@ export default function Header() {
                 className="lang__btn"
                 onClick={() => router.replace(pathname, { locale: l.id })}
               >
-                {l.label}
+                {xl(l.label)}
               </button>
             ))}
           </div>
@@ -108,14 +110,14 @@ export default function Header() {
       </div>
 
       {menu && (
-        <div id="mobile-menu" className="mobile-menu panel" data-title="Menu">
-          <nav aria-label="Mobile" className="mobile-menu__grid">
+        <div id="mobile-menu" className="mobile-menu panel" data-title={xl("Menu")}>
+          <nav aria-label={xl("Mobile")} className="mobile-menu__grid">
             {NAV.map((n) => (
               <Link key={n.href} href={n.href} className="mobile-menu__big display">{t(n.key)}</Link>
             ))}
             <div className="lang" role="group" aria-label={tc("language")}>
               {LOCALES.map((l) => (
-                <button key={l.id} type="button" lang={l.id} aria-pressed={locale === l.id} className="lang__btn" onClick={() => router.replace(pathname, { locale: l.id })}>{l.label}</button>
+                <button key={l.id} type="button" lang={l.id} aria-pressed={locale === l.id} className="lang__btn" onClick={() => router.replace(pathname, { locale: l.id })}>{xl(l.label)}</button>
               ))}
             </div>
             <div className="mobile-menu__more">

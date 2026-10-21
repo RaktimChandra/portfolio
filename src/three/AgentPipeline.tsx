@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -104,6 +105,7 @@ function Scene({ stage, accent, ink }: { stage: React.MutableRefObject<number>; 
 }
 
 export default function AgentPipeline() {
+  const xl = useX();
   const [sc, setSc] = useState(0);
   const [st, setSt] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -136,7 +138,7 @@ export default function AgentPipeline() {
   const s = SCENARIOS[sc];
   return (
     <div ref={wrap} className="pipe">
-      <div className="pipe__stage panel" data-title="Agent pipeline">
+      <div className="pipe__stage panel" data-title={xl("Agent pipeline")}>
         {colors && (
           <Canvas frameloop={live ? "always" : "never"} camera={{ position: [0, 0.4, 8.2], fov: 45 }} dpr={[1, 1.6]}>
             <ambientLight intensity={0.6} />
@@ -146,24 +148,24 @@ export default function AgentPipeline() {
         )}
       </div>
       <div className="pipe__side">
-        <div className="pipe__tabs" role="tablist" aria-label="Choose an input">
+        <div className="pipe__tabs" role="tablist" aria-label={xl("Choose an input")}>
           {SCENARIOS.map((x, i) => (
-            <button key={x.id} role="tab" aria-selected={i === sc} className="chip" onClick={() => (setSc(i), setSt(0))}>{x.name}</button>
+            <button key={x.id} role="tab" aria-selected={i === sc} className="chip" onClick={() => (setSc(i), setSt(0))}>{xl(x.name)}</button>
           ))}
         </div>
         <ol className="pipe__steps">
           {s.steps.map((line, i) => (
             <li key={i} className={i === st ? "is-now" : i < st ? "is-done" : ""}>
               <button type="button" onClick={() => (setSt(i), setPlaying(false))}>
-                <b>{STAGES[i]}</b>
-                <span>{line}</span>
+                <b>{xl(STAGES[i])}</b>
+                <span>{xl(line)}</span>
               </button>
             </li>
           ))}
         </ol>
         <p className="pipe__foot">
-          <button type="button" className="btn btn-quiet" onClick={() => setPlaying((p) => !p)}>{playing ? "Pause" : "Play"}</button>
-          <Link href={s.project.href} className="link-u">See {s.project.title} →</Link>
+          <button type="button" className="btn btn-quiet" onClick={() => setPlaying((p) => !p)}>{playing ? xl("Pause") : xl("Play")}</button>
+          <Link href={s.project.href} className="link-u">{xl("See")}{" "}{xl(s.project.title)} →</Link>
         </p>
       </div>
     </div>

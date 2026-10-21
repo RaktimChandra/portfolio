@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 
@@ -32,6 +33,7 @@ const SCRIPT: Ev[] = [
 ];
 
 export default function DebateSim() {
+  const xl = useX();
   const [n, setN] = useState(0);
   const [claims, setClaims] = useState(START);
   const [playing, setPlaying] = useState(false);
@@ -50,26 +52,26 @@ export default function DebateSim() {
   const start = () => { setN(0); setClaims(START); setPlaying(true); track("demo_used", { demo: "debate" }); };
   return (
     <div className="demo">
-      <p className="demo__row"><b>Query:</b> {Q} <button type="button" className="btn" onClick={start} disabled={playing}>{n ? "Replay" : "Start the debate"}</button></p>
+      <p className="demo__row"><b>{xl("Query:")}</b> {xl(Q)} <button type="button" className="btn" onClick={start} disabled={playing}>{n ? xl("Replay") : xl("Start the debate")}</button></p>
       <div className="demo__split">
         <ol className="debate__log" ref={log} aria-live="polite">
           {SCRIPT.slice(0, n).map((e, i) => (
-            <li key={i} data-role={e.role}><span className="debate__who">{e.role}{e.round ? ` · round ${e.round}` : ""}</span>{e.text}</li>
+            <li key={i} data-role={e.role}><span className="debate__who">{xl(e.role)}{e.round ? ` · round ${e.round}` : ""}</span>{xl(e.text)}</li>
           ))}
-          {!n && <li className="muted">Press start to watch the agents argue.</li>}
+          {!n && <li className="muted">{xl("Press start to watch the agents argue.")}</li>}
         </ol>
         <ul className="debate__claims">
           {claims.map((c) => (
             <li key={c.id} data-contested={c.contested || undefined}>
-              <span className="text-small muted">{c.id}{c.contested ? " · contested" : ""}</span>
-              <span>{c.text}</span>
+              <span className="text-small muted">{xl(c.id)}{c.contested ? xl(" · contested") : ""}</span>
+              <span>{xl(c.text)}</span>
               <span className="debate__bar" style={{ ["--w" as string]: `${c.conf * 100}%` }}><i /></span>
-              <span className="tabular text-small">confidence {c.conf.toFixed(2)}</span>
+              <span className="tabular text-small">{xl("confidence")}{" "}{c.conf.toFixed(2)}</span>
             </li>
           ))}
         </ul>
       </div>
-      <p className="text-small muted"><b>Protocol simulation.</b> The messages are prewritten to show how the protocol runs; in Marginalia each one is an LLM agent working from retrieved sources, streamed over a WebSocket.</p>
+      <p className="text-small muted"><b>{xl("Protocol simulation.")}</b>{" "}{xl("The messages are prewritten to show how the protocol runs; in Marginalia each one is an LLM agent working from retrieved sources, streamed over a WebSocket.")}</p>
     </div>
   );
 }

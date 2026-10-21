@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -84,10 +85,11 @@ function Scene({ items, onHover, onPick }: { items: Project[]; onHover: (p: Proj
 }
 
 export default function Constellation({ items }: { items: Project[] }) {
+  const xl = useX();
   const router = useRouter();
   const [hover, setHover] = useState<Project | null>(null);
   return (
-    <div className="constellation panel" data-title="Constellation">
+    <div className="constellation panel" data-title={xl("Constellation")}>
       <Canvas camera={{ position: [0, 0, 8.5], fov: 45 }} dpr={[1, 1.75]} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
         <ambientLight intensity={0.6} />
         <pointLight position={[6, 6, 6]} intensity={60} />
@@ -98,11 +100,11 @@ export default function Constellation({ items }: { items: Project[] }) {
       <div className="constellation__label">
         {hover ? (
           <>
-            <p className="display">{hover.title}</p>
-            <p className="text-small">{hover.tagline} <span className="muted">· {hover.domains.map((d) => DOMAIN_LABEL[d]).join(", ")}</span></p>
+            <p className="display">{xl(hover.title)}</p>
+            <p className="text-small">{xl(hover.tagline)} <span className="muted">· {hover.domains.map((d) => DOMAIN_LABEL[d]).join(", ")}</span></p>
           </>
         ) : (
-          <p className="text-small muted">Drag to turn. Bronze nodes are featured work; lines join projects that share two or more areas. Click a node to open it.</p>
+          <p className="text-small muted">{xl("Drag to turn. Bronze nodes are featured work; lines join projects that share two or more areas. Click a node to open it.")}</p>
         )}
       </div>
     </div>

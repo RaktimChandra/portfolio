@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useState } from "react";
 import { track } from "@/lib/analytics";
 
@@ -67,6 +68,7 @@ function runSuite(s: (typeof SUITES)[number], bug: Bug | null): Cell {
 }
 
 export default function FaultToy() {
+  const xl = useX();
   const [m, setM] = useState<{ base: Record<string, Cell>; rows: Record<Bug, Record<string, Cell>>; ms: number } | null>(null);
   const run = () => {
     const t = performance.now();
@@ -77,28 +79,28 @@ export default function FaultToy() {
   };
   return (
     <div className="demo">
-      <p className="demo__row"><button type="button" className="btn" onClick={run}>{m ? "Run the experiment again" : "Seed each bug and run every suite"}</button>{m && <span className="text-small muted tabular">{BUGS.length * SUITES.length + SUITES.length} suite runs in {m.ms.toFixed(0)} ms</span>}</p>
+      <p className="demo__row"><button type="button" className="btn" onClick={run}>{m ? xl("Run the experiment again") : xl("Seed each bug and run every suite")}</button>{m && <span className="text-small muted tabular">{xl.f("{n} suite runs in {ms} ms", { n: BUGS.length * SUITES.length + SUITES.length, ms: m.ms.toFixed(0) })}</span>}</p>
       {m && (
         <div className="demo__table-wrap">
           <table className="demo__table">
-            <thead><tr><th scope="col">Seeded bug</th>{SUITES.map((s) => <th key={s.id} scope="col">{s.name}</th>)}</tr></thead>
+            <thead><tr><th scope="col">{xl("Seeded bug")}</th>{SUITES.map((s) => <th key={s.id} scope="col">{xl(s.name)}</th>)}</tr></thead>
             <tbody>
-              <tr><th scope="row" className="muted">No bug (baseline)</th>{SUITES.map((s) => <td key={s.id} data-s={m.base[s.id].caught ? "red" : "green"}>{m.base[s.id].caught ? `red ${m.base[s.id].failed}/${m.base[s.id].total}` : "green"}</td>)}</tr>
+              <tr><th scope="row" className="muted">{xl("No bug (baseline)")}</th>{SUITES.map((s) => <td key={s.id} data-s={m.base[s.id].caught ? "red" : "green"}>{m.base[s.id].caught ? `red ${m.base[s.id].failed}/${m.base[s.id].total}` : "green"}</td>)}</tr>
               {BUGS.map((b) => (
                 <tr key={b.id}>
-                  <th scope="row">{b.label}</th>
+                  <th scope="row">{xl(b.label)}</th>
                   {SUITES.map((s) => {
                     const c = m.rows[b.id][s.id], credited = !m.base[s.id].caught && c.caught;
                     return <td key={s.id} data-s={credited ? "caught" : "escaped"}>{credited ? `caught ${c.failed}/${c.total}` : "escaped"}</td>;
                   })}
                 </tr>
               ))}
-              <tr><th scope="row">Detection rate</th>{SUITES.map((s) => <td key={s.id} className="tabular"><b>{Math.round((100 * BUGS.filter((b) => !m.base[s.id].caught && m.rows[b.id][s.id].caught).length) / BUGS.length)}%</b></td>)}</tr>
+              <tr><th scope="row">{xl("Detection rate")}</th>{SUITES.map((s) => <td key={s.id} className="tabular"><b>{Math.round((100 * BUGS.filter((b) => !m.base[s.id].caught && m.rows[b.id][s.id].caught).length) / BUGS.length)}%</b></td>)}</tr>
             </tbody>
           </table>
         </div>
       )}
-      <p className="text-small muted">No single suite catches everything; that is the point of the full project, which runs eight suites against a real web app in CI.</p>
+      <p className="text-small muted">{xl("No single suite catches everything; that is the point of the full project, which runs eight suites against a real web app in CI.")}</p>
     </div>
   );
 }

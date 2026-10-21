@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { projects } from "@/content/projects";
@@ -65,6 +66,7 @@ const dist = (m: Metric, a: Float32Array, b: Float32Array) => {
 };
 
 export default function VectorToy() {
+  const xl = useX();
   const idx = useMemo(() => build(), []);
   const [q, setQ] = useState("offline AI on a cheap laptop");
   const [m, setM] = useState<Metric>("cosine");
@@ -85,27 +87,27 @@ export default function VectorToy() {
   return (
     <div className="demo">
       <form className="demo__row" onSubmit={(e) => (e.preventDefault(), track("demo_used", { demo: "vector" }))}>
-        <label className="sr-only" htmlFor="vq">Search query</label>
-        <input id="vq" className="demo__input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Describe a project…" maxLength={120} />
-        <div className="demo__seg" role="radiogroup" aria-label="Distance metric">
+        <label className="sr-only" htmlFor="vq">{xl("Search query")}</label>
+        <input id="vq" className="demo__input" value={q} onChange={(e) => setQ(e.target.value)} placeholder={xl("Describe a project…")} maxLength={120} />
+        <div className="demo__seg" role="radiogroup" aria-label={xl("Distance metric")}>
           {(["cosine", "euclidean", "manhattan"] as Metric[]).map((k) => (
-            <button key={k} type="button" role="radio" aria-checked={m === k} className="chip" onClick={() => setM(k)}>{k}</button>
+            <button key={k} type="button" role="radio" aria-checked={m === k} className="chip" onClick={() => setM(k)}>{xl(k)}</button>
           ))}
         </div>
       </form>
       <div className="demo__split">
         <ol className="demo__list">
           {res.ranked.map((r) => (
-            <li key={r.i}><Link href={`/work/${idx.docs[r.i].slug}`} className="link-u">{idx.docs[r.i].title}</Link> <span className="tabular muted text-small">{m === "cosine" ? `sim ${(1 - r.d).toFixed(3)}` : `d ${r.d.toFixed(3)}`}</span></li>
+            <li key={r.i}><Link href={`/work/${idx.docs[r.i].slug}`} className="link-u">{xl(idx.docs[r.i].title)}</Link> <span className="tabular muted text-small">{m === "cosine" ? `sim ${(1 - r.d).toFixed(3)}` : `d ${r.d.toFixed(3)}`}</span></li>
           ))}
         </ol>
-        <svg viewBox="0 0 400 260" className="demo__map" role="img" aria-label="Projects projected onto two principal components; the query and its nearest neighbours are highlighted">
+        <svg viewBox="0 0 400 260" className="demo__map" role="img" aria-label={xl("Projects projected onto two principal components; the query and its nearest neighbours are highlighted")}>
           {res.ranked.map((r) => <line key={r.i} x1={sx(res.qp[0])} y1={sy(res.qp[1])} x2={sx(idx.pts[r.i][0])} y2={sy(idx.pts[r.i][1])} stroke="var(--accent)" strokeOpacity="0.5" />)}
           {idx.pts.map((p, i) => <circle key={i} cx={sx(p[0])} cy={sy(p[1])} r={top.has(i) ? 5 : 3} fill={top.has(i) ? "var(--accent)" : "var(--ink)"} opacity={top.has(i) ? 1 : 0.35}><title>{idx.docs[i].title}</title></circle>)}
           <circle cx={sx(res.qp[0])} cy={sy(res.qp[1])} r="7" fill="none" stroke="var(--accent)" strokeWidth="2.5" />
         </svg>
       </div>
-      <p className="text-small muted">Brute-force search over {idx.docs.length} projects, live in your browser as you type. Vectors are hashed character trigrams with TF-IDF, not a neural embedding; the real VectorEngine adds HNSW and KD-tree indexes and 768-dimension embeddings.</p>
+      <p className="text-small muted">{xl("Brute-force search over")}{" "}{xl(idx.docs.length)}{" "}{xl("projects, live in your browser as you type. Vectors are hashed character trigrams with TF-IDF, not a neural embedding; the real VectorEngine adds HNSW and KD-tree indexes and 768-dimension embeddings.")}</p>
     </div>
   );
 }

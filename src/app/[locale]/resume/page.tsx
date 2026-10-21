@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import PageHead from "@/components/PageHead";
 import Resume from "@/components/Resume";
 import PrintButton from "@/components/PrintButton";
@@ -12,19 +13,20 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function ResumePage({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   return (
     <div className="page wrap">
       <div className="no-print">
-        <PageHead title="Résumé" lede="Download the PDF, print it, or paste a job description into the matcher for a tailored version.">
+        <PageHead title={xl("Résumé")} lede={xl("Download the PDF, print it, or paste a job description into the matcher for a tailored version.")}>
           <p style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <a href="/resume.pdf" className="btn" download="Raktim-Chandra-Resume.pdf">Download PDF</a>
+            <a href="/resume.pdf" className="btn" download="Raktim-Chandra-Resume.pdf">{xl("Download PDF")}</a>
             <PrintButton />
-            <Link href="/match" className="btn btn-quiet">Tailor to a job</Link>
+            <Link href="/match" className="btn btn-quiet">{xl("Tailor to a job")}</Link>
           </p>
-          <nav className="role-tabs" aria-label="Role versions">
-            <span className="text-small muted">By role:</span>
-            {roleCVs.map((r) => <Link key={r.slug} href={`/resume/${r.slug}`} className="chip">{r.title}</Link>)}
+          <nav className="role-tabs" aria-label={xl("Role versions")}>
+            <span className="text-small muted">{xl("By role:")}</span>
+            {roleCVs.map((r) => <Link key={r.slug} href={`/resume/${r.slug}`} className="chip">{xl(r.title)}</Link>)}
           </nav>
         </PageHead>
       </div>

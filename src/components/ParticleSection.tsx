@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
@@ -17,6 +18,7 @@ const STAGES = [
 
 /** A pinned scroll scene: one cloud of points that becomes the name, a network, a globe, then the year. */
 export default function ParticleSection() {
+  const xl = useX();
   const sec = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [stage, setStage] = useState(0);
@@ -42,23 +44,23 @@ export default function ParticleSection() {
 
   if (!gl) {
     return (
-      <section className="pstory pstory--flat wrap" aria-label="In four lines">
+      <section className="pstory pstory--flat wrap" aria-label={xl("In four lines")}>
         {STAGES.map((s) => (
-          <div key={s.k}><h2 className="pstory__h display">{s.h}</h2><p>{s.p}</p></div>
+          <div key={s.k}><h2 className="pstory__h display">{xl(s.h)}</h2><p>{xl(s.p)}</p></div>
         ))}
       </section>
     );
   }
 
   return (
-    <section ref={sec} className="pstory" aria-label="In four lines">
+    <section ref={sec} className="pstory" aria-label={xl("In four lines")}>
       <div className="pstory__stick">
         <div className="pstory__canvas">{near && <ParticleStory progress={progress} live={near} />}</div>
         <div className="pstory__cap wrap" aria-live="polite">
-          <span className="tabular muted">{STAGES[stage].k} / 04</span>
-          <h2 className="pstory__h display">{STAGES[stage].h}</h2>
-          <p>{STAGES[stage].p}</p>
-          {stage === 3 && <p className="pstory__cta"><Link href="/contact" className="btn">Talk to me</Link> <Link href="/resume" className="btn btn-quiet">Résumé</Link></p>}
+          <span className="tabular muted">{xl(STAGES[stage].k)} / 04</span>
+          <h2 className="pstory__h display">{xl(STAGES[stage].h)}</h2>
+          <p>{xl(STAGES[stage].p)}</p>
+          {stage === 3 && <p className="pstory__cta"><Link href="/contact" className="btn">{xl("Talk to me")}</Link> <Link href="/resume" className="btn btn-quiet">{xl("Résumé")}</Link></p>}
         </div>
         <ol className="pstory__dots" aria-hidden="true">{STAGES.map((s, i) => <li key={s.k} data-on={i === stage || undefined} />)}</ol>
       </div>

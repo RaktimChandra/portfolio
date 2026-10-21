@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useRef, useState } from "react";
 import { certifications, links } from "@/content/record";
 
@@ -10,6 +11,7 @@ const initials = (s: string) => s.split(/\s+/).filter((w) => /^[A-Z]/.test(w)).s
 
 /** Every certificate as a frame on a wall. Tilt follows the pointer; a frame opens to its details. */
 export default function CertWall() {
+  const xl = useX();
   const wall = useRef<HTMLDivElement>(null);
   const [g, setG] = useState<string | null>(null);
   const [open, setOpen] = useState<number | null>(null);
@@ -21,10 +23,10 @@ export default function CertWall() {
   };
   const c = open !== null ? certifications[open] : null;
   return (
-    <section className="certwall" aria-label="Certificate wall">
-      <div className="demo__seg" role="group" aria-label="Filter by area">
-        <button type="button" className="chip" aria-pressed={g === null} onClick={() => setG(null)}>All {certifications.length}</button>
-        {groups.map((x) => <button key={x} type="button" className="chip" aria-pressed={g === x} onClick={() => setG(g === x ? null : x)}>{x}</button>)}
+    <section className="certwall" aria-label={xl("Certificate wall")}>
+      <div className="demo__seg" role="group" aria-label={xl("Filter by area")}>
+        <button type="button" className="chip" aria-pressed={g === null} onClick={() => setG(null)}>{xl("All")}{" "}{xl(certifications.length)}</button>
+        {groups.map((x) => <button key={x} type="button" className="chip" aria-pressed={g === x} onClick={() => setG(g === x ? null : x)}>{xl(x)}</button>)}
       </div>
       <div className="certwall__stage" onPointerMove={onMove} onPointerLeave={() => wall.current?.style.setProperty("--ry", "0deg")}>
         <div className="certwall__wall" ref={wall}>
@@ -40,8 +42,8 @@ export default function CertWall() {
             >
               <span className="frame__paper">
                 <span className="frame__seal" aria-hidden="true">{initials(x.issuer)}</span>
-                <span className="frame__name">{x.name}</span>
-                <span className="frame__iss">{x.issuer}</span>
+                <span className="frame__name">{xl(x.name)}</span>
+                <span className="frame__iss">{xl(x.issuer)}</span>
               </span>
             </button>
           ))}
@@ -49,10 +51,10 @@ export default function CertWall() {
       </div>
       {c && (
         <div className="certwall__open panel" role="dialog" aria-label={c.name}>
-          <p className="text-small muted">{c.group} · {c.issuer}</p>
-          <p className="card__title">{c.name}</p>
-          {links.cert[c.name] ? <a className="btn" href={links.cert[c.name]} target="_blank" rel="noopener">Verify ↗</a> : null}
-          <button type="button" className="chip" onClick={() => setOpen(null)}>Close</button>
+          <p className="text-small muted">{xl(c.group)} · {xl(c.issuer)}</p>
+          <p className="card__title">{xl(c.name)}</p>
+          {links.cert[c.name] ? <a className="btn" href={links.cert[c.name]} target="_blank" rel="noopener">{xl("Verify ↗")}</a> : null}
+          <button type="button" className="chip" onClick={() => setOpen(null)}>{xl("Close")}</button>
         </div>
       )}
     </section>

@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import PageHead from "@/components/PageHead";
 import { awards } from "@/content/record";
 import { boot, localeParams, meta, type LP } from "@/lib/page";
@@ -9,17 +10,18 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function Achievements({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   return (
     <div className="page wrap">
-      <PageHead title="Recognition" lede="Hackathons, competitions, open source and service. Most of it as team lead of VORTEXXX." />
+      <PageHead title={xl("Recognition")} lede={xl("Hackathons, competitions, open source and service. Most of it as team lead of VORTEXXX.")} />
       <table className="proof">
         <tbody>
           {awards.map((a) => (
             <tr key={a.title} data-reveal>
-              <th scope="row">{a.title}</th>
-              <td className="muted">{a.detail}</td>
-              <td className="tabular muted">{a.year}</td>
+              <th scope="row">{xl(a.title)}</th>
+              <td className="muted">{xl(a.detail)}</td>
+              <td className="tabular muted">{xl(a.year)}</td>
             </tr>
           ))}
         </tbody>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { profile } from "@/content/profile";
@@ -14,6 +15,7 @@ const SLIDES = [
 const DUR = 6000;
 
 export default function Brief() {
+  const xl = useX();
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   useEffect(() => {
@@ -30,17 +32,17 @@ export default function Brief() {
         ))}
       </div>
       <div key={i} className="brief__slide" aria-live="polite">
-        <p className="text-small muted">{String(i + 1).padStart(2, "0")} · {s.k}</p>
-        <p className="brief__big display">{s.big}</p>
-        <p className="text-lead" style={{ maxWidth: "48ch" }}>{s.line}</p>
+        <p className="text-small muted">{String(i + 1).padStart(2, "0")} · {xl(s.k)}</p>
+        <p className="brief__big display">{xl(s.big)}</p>
+        <p className="text-lead" style={{ maxWidth: "48ch" }}>{xl(s.line)}</p>
       </div>
       <div className="brief__ctrl">
-        <button type="button" className="btn btn-quiet" onClick={() => setI((x) => Math.max(0, x - 1))} disabled={i === 0}>← Back</button>
-        <button type="button" className="btn btn-quiet" onClick={() => setPaused((p) => !p)}>{paused ? "Play" : "Pause"}</button>
+        <button type="button" className="btn btn-quiet" onClick={() => setI((x) => Math.max(0, x - 1))} disabled={i === 0}>{xl("← Back")}</button>
+        <button type="button" className="btn btn-quiet" onClick={() => setPaused((p) => !p)}>{paused ? xl("Play") : xl("Pause")}</button>
         {i < SLIDES.length - 1 ? (
-          <button type="button" className="btn" onClick={() => setI((x) => x + 1)}>Next →</button>
+          <button type="button" className="btn" onClick={() => setI((x) => x + 1)}>{xl("Next →")}</button>
         ) : (
-          <Link href="/contact" className="btn">Contact</Link>
+          <Link href="/contact" className="btn">{xl("Contact")}</Link>
         )}
       </div>
     </section>

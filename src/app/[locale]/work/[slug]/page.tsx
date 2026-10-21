@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -27,6 +28,7 @@ export async function generateMetadata({ params }: P) {
 }
 
 export default async function CaseStudy({ params }: P) {
+  const xl = await getX();
   const { locale, slug } = await params;
   setRequestLocale(locale);
   const base = getProject(slug);
@@ -59,8 +61,8 @@ export default async function CaseStudy({ params }: P) {
           <dl className="big-metrics">
             {p.metrics.map((m) => (
               <div key={m.label}>
-                <dt className="text-small muted">{m.label}</dt>
-                <dd className="tabular">{m.value}</dd>
+                <dt className="text-small muted">{xl(m.label)}</dt>
+                <dd className="tabular">{xl(m.value)}</dd>
               </div>
             ))}
           </dl>
@@ -75,37 +77,37 @@ export default async function CaseStudy({ params }: P) {
 
       <div className="case">
         <div className="prose">
-          <p className="text-lead">{p.summary}</p>
+          <p className="text-lead">{xl(p.summary)}</p>
           {p.problem && (
             <>
               <h2>{t("problem")}</h2>
-              <p>{p.problem}</p>
+              <p>{xl(p.problem)}</p>
             </>
           )}
           {!!p.approach?.length && (
             <>
               <h2>{t("approach")}</h2>
-              <ul>{p.approach.map((a) => <li key={a}>{a}</li>)}</ul>
+              <ul>{p.approach.map((a) => <li key={a}>{xl(a)}</li>)}</ul>
             </>
           )}
           {p.context && (
             <>
               <h2>{t("context")}</h2>
-              <p>{p.context}</p>
+              <p>{xl(p.context)}</p>
             </>
           )}
-          {p.team && <p className="muted">{p.team}</p>}
+          {p.team && <p className="muted">{xl(p.team)}</p>}
         </div>
-        <aside className="case__aside panel" style={{ padding: "1.4rem" }} data-title="Details">
+        <aside className="case__aside panel" style={{ padding: "1.4rem" }} data-title={xl("Details")}>
           <dl>
-            <div><dt className="text-small muted">Year</dt><dd className="tabular">{p.year}</dd></div>
-            <div><dt className="text-small muted">Status</dt><dd style={{ textTransform: "capitalize" }}>{p.status}</dd></div>
-            <div><dt className="text-small muted">Areas</dt><dd>{p.domains.map((d) => DOMAIN_LABEL[d]).join(", ")}</dd></div>
-            {factLine(p) && (
-              <div><dt className="text-small muted">From the repository</dt><dd>{factLine(p)}</dd></div>
+            <div><dt className="text-small muted">{xl("Year")}</dt><dd className="tabular">{xl(p.year)}</dd></div>
+            <div><dt className="text-small muted">{xl("Status")}</dt><dd style={{ textTransform: "capitalize" }}>{xl(p.status)}</dd></div>
+            <div><dt className="text-small muted">{xl("Areas")}</dt><dd>{p.domains.map((d) => DOMAIN_LABEL[d]).join(", ")}</dd></div>
+            {factLine(p, xl) && (
+              <div><dt className="text-small muted">{xl("From the repository")}</dt><dd>{factLine(p, xl)}</dd></div>
             )}
             {!!p.stack.length && (
-              <div><dt className="text-small muted">{t("stack")}</dt><dd className="card__meta" style={{ marginTop: 6 }}>{p.stack.map((s) => <span className="tag" key={s}>{s}</span>)}</dd></div>
+              <div><dt className="text-small muted">{t("stack")}</dt><dd className="card__meta" style={{ marginTop: 6 }}>{p.stack.map((s) => <span className="tag" key={s}>{xl(s)}</span>)}</dd></div>
             )}
           </dl>
           <div className="case__links">
@@ -115,9 +117,9 @@ export default async function CaseStudy({ params }: P) {
         </aside>
       </div>
 
-      <nav className="sec-foot" aria-label="More projects" style={{ marginTop: "4rem", borderTop: "1px solid color-mix(in oklab, var(--ink) 14%, transparent)", paddingTop: "2rem" }}>
+      <nav className="sec-foot" aria-label={xl("More projects")} style={{ marginTop: "4rem", borderTop: "1px solid color-mix(in oklab, var(--ink) 14%, transparent)", paddingTop: "2rem" }}>
         <span className="muted">{t("next")}</span>
-        <Link href={`/work/${next.slug}`} className="display" style={{ fontSize: "clamp(2rem, 1rem + 4vw, 4.5rem)", textDecoration: "none" }}>{next.title} →</Link>
+        <Link href={`/work/${next.slug}`} className="display" style={{ fontSize: "clamp(2rem, 1rem + 4vw, 4.5rem)", textDecoration: "none" }}>{xl(next.title)} →</Link>
       </nav>
     </article>
   );

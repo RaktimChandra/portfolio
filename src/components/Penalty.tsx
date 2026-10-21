@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useState } from "react";
 import { blip } from "@/lib/sound";
 
@@ -13,6 +14,7 @@ const SPOTS = [
 
 /** 404 game: pick a spot, the keeper picks one too. */
 export default function Penalty() {
+  const xl = useX();
   const [shots, setShots] = useState(0);
   const [goals, setGoals] = useState(0);
   const [ball, setBall] = useState<[number, number] | null>(null);
@@ -34,14 +36,14 @@ export default function Penalty() {
   const ks = keeper === null ? null : SPOTS[keeper];
   return (
     <div className="grid gap-3" style={{ maxWidth: 720 }}>
-      <div className="penalty" role="group" aria-label="Goal, six target zones">
+      <div className="penalty" role="group" aria-label={xl("Goal, six target zones")}>
         {[3, 4, 5, 0, 1, 2].map((i) => (
-          <button key={i} type="button" aria-label={`Shoot ${["bottom left", "bottom centre", "bottom right", "top left", "top centre", "top right"][i]}`} onClick={() => shoot(i)} disabled={ball !== null} />
+          <button key={i} type="button" aria-label={xl.f("Shoot {where}", { where: xl(["bottom left", "bottom centre", "bottom right", "top left", "top centre", "top right"][i]) })} onClick={() => shoot(i)} disabled={ball !== null} />
         ))}
         <span className="penalty__keeper" style={ks ? { left: `${ks[0] - 9}%`, bottom: ks[1] > 40 ? "0%" : "38%", rotate: ks[0] < 40 ? "-35deg" : ks[0] > 60 ? "35deg" : "0deg" } : undefined} />
         <span className="penalty__ball" style={ball ? { left: `${ball[0]}%`, bottom: `${100 - ball[1] - 6}%` } : undefined} />
       </div>
-      <p aria-live="polite"><b>{msg}</b> <span className="muted tabular">Goals {goals} / {shots}</span></p>
+      <p aria-live="polite"><b>{xl(msg)}</b> <span className="muted tabular">{xl("Goals")}{" "}{xl(goals)} / {xl(shots)}</span></p>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import { Suspense } from "react";
 import PageHead from "@/components/PageHead";
 import ProposalDoc from "@/components/ProposalDoc";
@@ -10,10 +11,11 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function Proposal({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   return (
     <div className="page wrap">
-      <div className="no-print"><PageHead title="Your proposal" lede="Adjust the details, then save it as a PDF to share with your team." /></div>
+      <div className="no-print"><PageHead title={xl("Your proposal")} lede={xl("Adjust the details, then save it as a PDF to share with your team.")} /></div>
       <Suspense fallback={null}><ProposalDoc /></Suspense>
     </div>
   );

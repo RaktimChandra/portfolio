@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import PageHead from "@/components/PageHead";
 import InterviewMode from "@/components/InterviewMode";
 import { interview, starText } from "@/content/interview";
@@ -9,6 +10,7 @@ export async function generateMetadata({ params }: LP) {
   return meta("Interview mode", "The questions recruiters ask, answered by Raktim Chandra in STAR form with evidence from his real projects.", "/interview", locale);
 }
 export default async function InterviewPage({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   const faq = {
     "@context": "https://schema.org",
@@ -18,7 +20,7 @@ export default async function InterviewPage({ params }: LP) {
   return (
     <div className="page wrap">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />
-      <PageHead title="Interview mode" lede="Skip the first round. The twelve questions recruiters ask most, answered the way Raktim would: situation, task, action, result, with a link to the evidence for every claim." />
+      <PageHead title={xl("Interview mode")} lede={xl("Skip the first round. The twelve questions recruiters ask most, answered the way Raktim would: situation, task, action, result, with a link to the evidence for every claim.")} />
       <InterviewMode />
     </div>
   );

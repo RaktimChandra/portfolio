@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 import { useRouter } from "@/i18n/navigation";
@@ -24,6 +25,7 @@ const HELP = `commands
   clear | exit`;
 
 export default function Terminal() {
+  const xl = useX();
   const router = useRouter();
   const { close, setReality, toggleTheme } = useUI();
   const [lines, setLines] = useState<Line[]>([{ kind: "out", text: `raktim.sh — type 'help'. Escape or 'exit' to leave.` }]);
@@ -101,10 +103,10 @@ export default function Terminal() {
   };
 
   return (
-    <Modal label="Terminal" className="term">
+    <Modal label={xl("Terminal")} className="term">
       <div className="term__screen" onClick={() => document.getElementById("term-input")?.focus()}>
         {lines.map((l, i) => (
-          <pre key={i} className={`term__line term__line--${l.kind}`}>{l.kind === "in" ? `$ ${l.text}` : l.text}</pre>
+          <pre key={i} className={`term__line term__line--${l.kind}`}>{l.kind === "in" ? `$ ${l.text}` : xl(l.text)}</pre>
         ))}
         <form
           className="term__form"

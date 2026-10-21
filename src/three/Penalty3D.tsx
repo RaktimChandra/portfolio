@@ -1,5 +1,6 @@
 "use client";
 
+import { useX } from "@/i18n/x/client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import * as THREE from "three";
@@ -184,6 +185,7 @@ function Scene({ accent, onResult, phase, setPhase, ctlRef }: { accent: string; 
 const SAY: Record<Result, string> = { goal: "GOAL. Top bins.", saved: "Saved. He read it.", wide: "Wide. Into the stands.", over: "Over the bar.", post: "Off the woodwork!" };
 
 export default function Penalty3D() {
+  const xl = useX();
   const accent = useMemo(() => `#${cssColor("--accent", "#b08f74").getHexString()}`, []);
   const [phase, setPhase] = useState<Phase>("aim");
   const ctlRef = useRef<Ctl | null>(null);
@@ -209,7 +211,7 @@ export default function Penalty3D() {
       className="pens"
       tabIndex={0}
       role="application"
-      aria-label="Penalty shoot-out. Arrow keys aim, Enter or Space shoots."
+      aria-label={xl("Penalty shoot-out. Arrow keys aim, Enter or Space shoots.")}
       onKeyDown={(e) => {
         const k = e.key, c = ctlRef.current;
         if (!c) return;
@@ -226,12 +228,12 @@ export default function Penalty3D() {
         <Scene accent={accent} onResult={onResult} phase={over ? "done" : phase} setPhase={setPhase} ctlRef={ctlRef} />
       </Canvas>
       <div className="pens__hud">
-        <span className="pens__dots" aria-label={`${goals} goals from ${log.length} kicks`}>
+        <span className="pens__dots" aria-label={xl.f("{g} goals from {n} kicks", { g: goals, n: log.length })}>
           {Array.from({ length: 5 }, (_, i) => <i key={i} data-r={log[i] ?? ""} />)}
         </span>
-        <b aria-live="polite">{over ? `${goals} / 5. ${goals >= 4 ? "Ice cold." : goals >= 2 ? "Respectable." : "The keeper had your number."}` : phase === "done" && last ? SAY[last] : "Aim at the goal and click, or use the arrow keys and Enter."}</b>
-        <span className="tabular">Best {best}/5</span>
-        {over && <button type="button" className="btn" onClick={() => setLog([])}>Again</button>}
+        <b aria-live="polite">{over ? `${goals} / 5. ${xl(goals >= 4 ? "Ice cold." : goals >= 2 ? "Respectable." : "The keeper had your number.")}` : phase === "done" && last ? xl(SAY[last]) : xl("Aim at the goal and click, or use the arrow keys and Enter.")}</b>
+        <span className="tabular">{xl.f("Best {n}/5", { n: best })}</span>
+        {over && <button type="button" className="btn" onClick={() => setLog([])}>{xl("Again")}</button>}
       </div>
     </div>
   );

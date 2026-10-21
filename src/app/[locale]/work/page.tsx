@@ -1,3 +1,4 @@
+import { getX } from "@/i18n/x/server";
 import { getTranslations } from "next-intl/server";
 import PageHead from "@/components/PageHead";
 import WorkIndex from "@/components/WorkIndex";
@@ -11,13 +12,14 @@ export async function generateMetadata({ params }: LP) {
 }
 
 export default async function Work({ params }: LP) {
+  const xl = await getX();
   await boot(params);
   const t = await getTranslations("work");
   return (
     <div className="page wrap">
       <PageHead title={t("title")} lede={t("intro")} />
       <ProjectTilesLazy />
-      <h2 className="sec-title display" style={{ fontSize: "clamp(2rem, 1.2rem + 3vw, 3.6rem)", marginBottom: "1.25rem" }}>Everything</h2>
+      <h2 className="sec-title display" style={{ fontSize: "clamp(2rem, 1.2rem + 3vw, 3.6rem)", marginBottom: "1.25rem" }}>{xl("Everything")}</h2>
       <WorkIndex />
     </div>
   );
