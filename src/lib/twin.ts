@@ -185,7 +185,7 @@ const H: Handler[] = [
     test: (q) => has(q, "freelance", "client", "clients", "contract", "hire him for", "build for me", "my project", "my startup", "rate", "rates", "price", "pricing", "cost", "charge", "quote", "services"),
     run: () => ({
       intent: "freelance",
-      answer: `He has run a freelance practice since 2024 with ${freelance.clients} clients: ${freelance.clientTypes.join(", ").toLowerCase()}. Typical work: ${list(freelance.kinds.map((k) => k.name.toLowerCase()))}. Typical timelines run from ${services.map((s) => s.timeline).sort()[0]} for small dashboards to around 10 weeks for full products. Pricing is quoted after a short call, either fixed or weekly. Client names stay private under contract. Try the project scoper for a rough plan.`,
+      answer: `He has run a freelance practice since 2024 with ${freelance.clients} clients: ${freelance.clientTypes.join(", ").toLowerCase()}. Typical work: ${list(freelance.kinds.map((k) => (k.name.startsWith("AI") ? k.name : k.name.charAt(0).toLowerCase() + k.name.slice(1))))}. Typical timelines run from ${services.map((s) => s.timeline).sort()[0]} for small dashboards to around 10 weeks for full products. Pricing is quoted after a short call, either fixed or weekly. Client names stay private under contract. Try the project scoper for a rough plan.`,
       sources: [{ title: "Services", href: "/services" }, { title: "Project scoper", href: "/scope" }],
       followups: ["What AI products has he built?", "How do I contact him?"],
     }),
@@ -256,6 +256,21 @@ const H: Handler[] = [
     },
   },
   {
+    id: "project",
+    test: (q) => !!findProject(q),
+    run: (q) => {
+      const p = findProject(q)!;
+      const links = [repoUrl(p) ? `Code: ${repoUrl(p)}` : "The code is private", p.demo ? `live demo: ${p.demo}` : ""].filter(Boolean).join(", ");
+      return {
+        intent: "project",
+        answer: `${p.title} (${p.year}): ${p.tagline} ${p.summary}${p.approach?.length ? ` How it works: ${p.approach.slice(0, 2).join(" ")}` : ""}${p.metrics?.length ? ` Measured: ${p.metrics.map((m) => `${m.label} ${m.value}`).join("; ")}.` : ""}${p.context ? ` ${p.context}` : ""} Built with ${list(p.stack, 8)}. ${links}.`,
+        sources: [projSrc(p)],
+        projects: [p.slug],
+        followups: [`What else uses ${p.stack[0]}?`, "What are his best projects?"],
+      };
+    },
+  },
+  {
     id: "missing-tech",
     test: (q) => MISSING.some((m) => has(q, m)),
     run: (q) => {
@@ -320,21 +335,6 @@ const H: Handler[] = [
       sources: [{ title: "Experience", href: "/experience" }],
       followups: ["What did he do at Bluestock Fintech?", "What did he do at Shristi?"],
     }),
-  },
-  {
-    id: "project",
-    test: (q) => !!findProject(q),
-    run: (q) => {
-      const p = findProject(q)!;
-      const links = [repoUrl(p) ? `Code: ${repoUrl(p)}` : "The code is private", p.demo ? `live demo: ${p.demo}` : ""].filter(Boolean).join(", ");
-      return {
-        intent: "project",
-        answer: `${p.title} (${p.year}): ${p.tagline} ${p.summary}${p.approach?.length ? ` How it works: ${p.approach.slice(0, 2).join(" ")}` : ""}${p.metrics?.length ? ` Measured: ${p.metrics.map((m) => `${m.label} ${m.value}`).join("; ")}.` : ""}${p.context ? ` ${p.context}` : ""} Built with ${list(p.stack, 8)}. ${links}.`,
-        sources: [projSrc(p)],
-        projects: [p.slug],
-        followups: [`What else uses ${p.stack[0]}?`, "What are his best projects?"],
-      };
-    },
   },
   {
     id: "best",

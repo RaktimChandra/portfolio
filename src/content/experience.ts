@@ -193,5 +193,5 @@ export const freelance = {
     { name: "Websites and landing pages", detail: "Fast, accessible marketing sites with CMS where needed" },
     { name: "Automation and integrations", detail: "Internal tools, APIs, third-party integrations, scheduled jobs" },
   ],
-  clientTypes: ["Enterprises", "Startups", "Agencies", "Individual founders"],
+  clientTypes: ["Enterprises", "Startups", "Individuals"],
 };
