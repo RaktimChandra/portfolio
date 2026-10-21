@@ -45,7 +45,7 @@ export default function CommandPalette() {
             <Command.Item onSelect={() => { toggleTheme(); close(); }}>Toggle light and dark</Command.Item>
             <Command.Item onSelect={() => { setSound(!sound); close(); }}>{sound ? "Turn sound off" : "Turn sound on"}</Command.Item>
             <Command.Item onSelect={() => open("terminal")}>Open the terminal</Command.Item>
-            <Command.Item onSelect={() => open("game")}>Play keepy-uppy</Command.Item>
+            <Command.Item onSelect={() => open("game")}>Take a penalty</Command.Item>
           </Command.Group>
           <Command.Group heading="Projects">
             {projects.map((p) => (

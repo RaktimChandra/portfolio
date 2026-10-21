@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import Penalty from "@/components/Penalty";
+import PenaltyGame from "@/components/PenaltyGame";
 
 export default async function NotFound() {
   const t = await getTranslations("notFound");
@@ -11,7 +11,7 @@ export default async function NotFound() {
         <h1 className="page-title display">{t("title")}</h1>
         <p className="page-lede">{t("body")}</p>
       </header>
-      <Penalty />
+      <PenaltyGame />
       <p style={{ marginTop: "2rem" }}><Link href="/" className="btn">{t("home")}</Link></p>
     </div>
   );

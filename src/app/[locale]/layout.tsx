@@ -12,6 +12,7 @@ import Providers from "@/components/Providers";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Overlays from "@/components/Overlays";
+import PageTransition from "@/components/PageTransition";
 import { SITE_URL } from "@/lib/site";
 import { profile } from "@/content/profile";
 
@@ -86,6 +87,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
             <main id="main" tabIndex={-1}>{children}</main>
             <Footer />
             <Overlays />
+            <PageTransition />
           </Providers>
         </NextIntlClientProvider>
         {process.env.VERCEL && (

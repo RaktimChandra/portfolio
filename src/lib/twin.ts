@@ -388,7 +388,7 @@ const H: Handler[] = [
     test: (q) => has(q, "who is", "who's", "about him", "about raktim", "tell me about", "introduce", "summary", "background", "where is he", "where does he", "based", "from", "location", "hobby", "hobbies", "football", "free time", "fun"),
     run: (q) => {
       if (has(q, "hobby", "hobbies", "football", "free time", "fun", "sport")) {
-        return { intent: "hobbies", answer: `Football first: Messi and Argentina, always. Then the gym, swimming and basketball. (Try the Konami code on this site for a keepy-uppy game.)`, sources: [{ title: "About", href: "/about" }], followups: ["What are his best projects?"] };
+        return { intent: "hobbies", answer: `Football first: Messi and Argentina, always. Then the gym, swimming and basketball. (Try the Konami code on this site for a 3D penalty shoot-out, or click the football in the hero room.)`, sources: [{ title: "About", href: "/about" }], followups: ["What are his best projects?"] };
       }
       return {
         intent: "about",

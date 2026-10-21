@@ -7,7 +7,7 @@ const RealityDial = dynamic(() => import("./RealityDial"), { ssr: false });
 const CommandPalette = dynamic(() => import("./CommandPalette"), { ssr: false });
 const Terminal = dynamic(() => import("./Terminal"), { ssr: false });
 const TwinPanel = dynamic(() => import("./TwinPanel"), { ssr: false });
-const KeepyUppy = dynamic(() => import("./KeepyUppy"), { ssr: false });
+const GameOverlay = dynamic(() => import("./GameOverlay"), { ssr: false });
 
 export default function Overlays() {
   const overlay = useUI((s) => s.overlay);
@@ -18,7 +18,7 @@ export default function Overlays() {
       {overlay === "palette" && <CommandPalette />}
       {overlay === "terminal" && <Terminal />}
       {overlay === "twin" && <TwinPanel />}
-      {overlay === "game" && <KeepyUppy />}
+      {overlay === "game" && <GameOverlay />}
     </>
   );
 }
