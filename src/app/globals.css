@@ -1,0 +1,174 @@
+@import "tailwindcss";
+@import "../reality/realities.css";
+@import "./components.css";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --font-display: var(--font-display);
+  --font-text: var(--font-text);
+  --font-code: var(--font-code);
+  --radius-ui: var(--radius);
+}
+
+/* ---------- Type scale (five steps, from the direction sheet) ---------- */
+:root {
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2.5rem, 1.2rem + 5vw, 5.5rem);
+  --step-mega: clamp(5rem, 2rem + 14vw, 17rem);
+
+  --margin: clamp(16px, 2.4vw, 32px);
+  --section-gap: clamp(96px, 12vw, 200px);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur: 240ms;
+
+  --font-code: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scrollbar-gutter: stable;
+  hanging-punctuation: first last;
+  transition: background-color 400ms var(--ease-out), color 400ms var(--ease-out);
+}
+html[lang="hi"] { --font-text: var(--font-devanagari), var(--font-archivo), system-ui, sans-serif; }
+html[lang="bn"] { --font-text: var(--font-bengali), var(--font-archivo), system-ui, sans-serif; }
+html[lang="hi"] .display, html[lang="bn"] .display { text-transform: none; }
+
+body {
+  min-height: 100svh;
+  font-size: var(--step-body);
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+::selection { background: var(--accent); color: var(--accent-ink); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+a { color: inherit; text-decoration-thickness: from-font; text-underline-offset: 0.18em; }
+
+img, video, canvas, svg { display: block; max-width: 100%; }
+
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* ---------- Display type ---------- */
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
+  text-transform: var(--display-case);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--display-leading);
+  font-variation-settings: var(--display-fvs, normal);
+}
+.text-small { font-size: var(--step-small); line-height: 1.45; }
+.text-body { font-size: var(--step-body); line-height: 1.55; }
+.text-lead { font-size: var(--step-lead); line-height: 1.35; }
+.text-head { font-size: var(--step-head); }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ---------- Frame ---------- */
+.frame { padding-inline: var(--margin); }
+.wrap { width: 100%; max-width: 1600px; margin-inline: auto; padding-inline: var(--margin); }
+.section { padding-block: calc(var(--section-gap) * 0.5); position: relative; }
+
+/* ---------- Surfaces ---------- */
+.panel {
+  background: var(--panel-bg);
+  border: var(--panel-border);
+  box-shadow: var(--panel-shadow);
+  border-radius: var(--radius);
+  backdrop-filter: var(--panel-blur);
+  -webkit-backdrop-filter: var(--panel-blur);
+}
+.field {
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5em;
+  min-height: 48px; padding: 0 1.4em;
+  font: 500 var(--step-body)/1 var(--font-text);
+  background: var(--btn-bg); color: var(--btn-ink);
+  border: var(--btn-border); border-radius: var(--btn-radius);
+  box-shadow: var(--btn-shadow);
+  text-decoration: none; cursor: pointer;
+  transition: transform 160ms var(--ease-out), background-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.btn:hover { background: var(--btn-bg-hover, var(--btn-bg)); }
+.btn:active { transform: scale(0.97); }
+.btn-quiet {
+  background: transparent; color: var(--ink); border: var(--quiet-border, 1px solid color-mix(in oklab, var(--ink) 28%, transparent));
+  box-shadow: none;
+}
+.btn-quiet:hover { background: color-mix(in oklab, var(--ink) 8%, transparent); }
+
+.link-u { text-decoration: underline; text-decoration-color: color-mix(in oklab, currentColor 35%, transparent); transition: text-decoration-color var(--dur); }
+.link-u:hover { text-decoration-color: currentColor; }
+
+.muted { color: var(--muted); }
+.accent { color: var(--accent); }
+
+/* Veil: fades the reality field behind reading areas. */
+.veil {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: var(--bg);
+  opacity: var(--veil-now, 0);
+  transition: opacity 500ms var(--ease-out);
+}
+
+/* Entrance helper: content is visible without JS; JS opts elements in. */
+.js [data-reveal] { opacity: 0; transform: translate3d(0, 24px, 0); }
+.js [data-reveal].is-in {
+  opacity: 1; transform: none;
+  transition: opacity 700ms var(--ease-out), transform 800ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 75ms);
+}
+
+/* Skip link */
+.skip { position: absolute; left: var(--margin); top: -100px; z-index: 100; }
+.skip:focus { top: 12px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+}
+
+/* View transitions between pages */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: 220ms var(--ease-in-out) both vt-out; }
+::view-transition-new(root) { animation: 380ms var(--ease-out) both vt-in; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(12px); } }
+
+/* Print (résumé) */
+@media print {
+  .no-print, canvas, .veil { display: none !important; }
+  html, body { background: #fff !important; color: #111 !important; }
+}
