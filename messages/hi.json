@@ -126,7 +126,9 @@
     "match": "जॉब मैचर",
     "scope": "प्रोजेक्ट स्कोपर",
     "skills": "कौशल",
-    "journey": "सफ़र (3D)"
+    "journey": "सफ़र (3D)",
+    "interview": "इंटरव्यू मोड",
+    "blog": "ब्लॉग"
   },
   "notFound": {
     "title": "चूक गए।",

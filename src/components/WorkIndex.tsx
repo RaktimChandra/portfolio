@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localize } from "@/content/i18n";
 import { Link } from "@/i18n/navigation";
-import { DOMAIN_LABEL, projects, repoUrl, type Domain } from "@/content/projects";
+import { DOMAIN_LABEL, factLine, projects, repoUrl, type Domain } from "@/content/projects";
 
 const Constellation = dynamic(() => import("./Constellation"), { ssr: false, loading: () => <div className="constellation panel" /> });
 
@@ -17,7 +18,8 @@ export default function WorkIndex() {
     projects.forEach((p) => p.domains.forEach((d) => c.set(d, (c.get(d) ?? 0) + 1)));
     return [...c.entries()].sort((a, b) => b[1] - a[1]);
   }, []);
-  const list = projects.filter((p) => (f === "all" ? true : f === "featured" ? !!p.featured : p.domains.includes(f)));
+  const locale = useLocale();
+  const list = projects.map((p) => localize(p, locale)).filter((p) => (f === "all" ? true : f === "featured" ? !!p.featured : p.domains.includes(f)));
 
   return (
     <>
@@ -48,6 +50,7 @@ export default function WorkIndex() {
             {!!p.metrics?.length && (
               <p className="text-small"><b className="tabular">{p.metrics[0].value}</b> <span className="muted">{p.metrics[0].label}</span></p>
             )}
+            {factLine(p) && <p className="text-small muted tabular">{factLine(p)}</p>}
             <p className="card__meta">{p.stack.slice(0, 5).map((s) => <span key={s} className="tag">{s}</span>)}</p>
             <p className="card__meta" style={{ fontSize: 14 }}>
               {repoUrl(p) ? <a className="link-u" href={repoUrl(p)} target="_blank" rel="noopener">{t("code")} ↗</a> : <span>{t("private")}</span>}

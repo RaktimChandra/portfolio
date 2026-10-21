@@ -1,3 +1,5 @@
+import { repoFacts } from "./repoFacts";
+
 /**
  * Every project on the site. Metrics here are only the ones measured and published in the
  * project's own repository or write-up. Where nothing is measured the card stays qualitative.
@@ -19,6 +21,7 @@ export type Project = {
   team?: string;
   repo?: string; // GitHub repo name under RaktimChandra, when public
   demo?: string; // only when a live URL is known
+  video?: string; // 30-second demo: "/videos/<slug>.mp4" in public/, or a YouTube URL
   status: "shipped" | "deployed" | "research" | "in development" | "delivered";
   featured?: number; // order on the home page; lower = earlier
   private?: boolean; // code not public
@@ -161,9 +164,9 @@ export const projects: Project[] = [
     summary:
       "A knowledge graph built from more than two million tokens of biomedical literature: genes, proteins, pathways, drugs and their interactions. Multi-hop traversal hands the model a small, precise context instead of a pile of similar chunks.",
     metrics: [
-      { label: "Tokens per query vs LLM-only", value: "−67.8%" },
+      { label: "Tokens per query vs basic RAG", value: "−67.8%" },
       { label: "LLM-judge pass rate", value: "93%" },
-      { label: "Latency", value: "50% faster" },
+      { label: "Latency vs basic RAG", value: "50% faster" },
       { label: "BERTScore F1", value: "0.61" },
     ],
     context: "TigerGraph GraphRAG Inference Hackathon, team VORTEX.",
@@ -824,6 +827,13 @@ export const projects: Project[] = [
     private: true,
   },
 ];
+
+export const factsFor = (p: Project) => (p.repo ? repoFacts[p.repo] : undefined);
+export function factLine(p: Project) {
+  const f = factsFor(p);
+  if (!f) return "";
+  return [`${f.loc.toLocaleString("en-IN")} lines of ${f.langs[0]}${f.langs[1] ? `, ${f.langs[1]}` : ""}`, f.tests ? `${f.tests} tests` : "", f.workflows ? `${f.workflows} CI workflow${f.workflows > 1 ? "s" : ""}` : "", f.commits > 5 ? `${f.commits} commits` : "", f.docker ? "Dockerised" : ""].filter(Boolean).join(" · ");
+}
 
 export const featured = projects.filter((p) => p.featured).sort((a, b) => (a.featured ?? 99) - (b.featured ?? 99));
 export const getProject = (slug: string) => projects.find((p) => p.slug === slug);

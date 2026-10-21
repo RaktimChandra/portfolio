@@ -6,9 +6,11 @@ import TwinBox from "@/components/TwinBox";
 import ContactField from "@/components/ContactField";
 import AgentPipelineLazy from "@/components/AgentPipelineLazy";
 import GitHubPulse from "@/components/GitHubPulse";
+import Endorsements from "@/components/Endorsements";
 import { profile } from "@/content/profile";
 import { experience, freelance } from "@/content/experience";
 import { featured } from "@/content/projects";
+import { localize } from "@/content/i18n";
 import { awards, services } from "@/content/record";
 import { months, ym } from "@/lib/format";
 
@@ -50,7 +52,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <h2 id="work-h" className="sec-title display" data-reveal>{t("workTitle")}</h2>
           <p className="sec-note" data-reveal>{t("workNote")}</p>
         </header>
-        <WorkLedger items={featured} />
+        <WorkLedger items={featured.map((p) => localize(p, locale))} />
         <p className="sec-foot"><Link href="/work" className="btn btn-quiet">{t("allWork")} →</Link></p>
       </section>
 
@@ -145,6 +147,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           <Link href="/scope" className="btn btn-quiet">Scope a project</Link>
         </p>
       </section>
+
+      <Endorsements />
 
       {/* Recognition table */}
       <section className="section wrap" aria-labelledby="proof-h">

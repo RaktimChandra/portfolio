@@ -36,6 +36,7 @@ export default async function Footer() {
         </div>
         <p className="site-footer__base text-small muted">
           <span>© {new Date().getFullYear()} {profile.name}. Built by hand with Next.js, WebGL and twenty-one ways of drawing the same page.</span>
+          <span>Anonymous visit stats via PostHog; Do Not Track is respected.</span>
           <span>Press <kbd>R</kbd> for realities, <kbd>/</kbd> to search, <kbd>`</kbd> for a terminal.</span>
         </p>
       </div>

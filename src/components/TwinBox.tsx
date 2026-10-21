@@ -6,10 +6,11 @@ import { Link } from "@/i18n/navigation";
 import { useUI } from "@/lib/store";
 import { getProject } from "@/content/projects";
 import { blip } from "@/lib/sound";
+import { track } from "@/lib/analytics";
 
 type QA = { q: string; a?: string; shown?: number; sources?: { title: string; href: string }[]; followups?: string[]; projects?: string[]; err?: boolean; mode?: string };
 
-const SUGGEST = ["Who is Raktim?", "What has he built with agents?", "Which projects use Kafka?", "Tell me about the Amazon ML Challenge", "Is he open to full-time roles?", "How do I hire him for a project?"];
+const SUGGEST = ["Tell me about yourself.", "What's the hardest problem he solved?", "What has he built with agents?", "Which projects use Kafka?", "Tell me about the Amazon ML Challenge", "Is he open to full-time roles?", "How do I hire him for a project?"];
 
 type SR = { start: () => void; stop: () => void; onresult: (e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void; onend: () => void; onerror: () => void; lang: string; interimResults: boolean };
 
@@ -65,6 +66,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
       const j = await r.json();
       const a: string = j.answer ?? j.error;
       setItems((x) => x.map((it, i) => (i === x.length - 1 ? { ...it, a, shown: 0, sources: j.sources, followups: j.followups, projects: j.projects, err: !r.ok, mode: j.mode } : it)));
+      track("twin_question", { q: q.slice(0, 120), intent: j.intent, mode: j.mode, variant });
       if (speakOn && r.ok) speak(a);
     } catch {
       setItems((x) => x.map((it, i) => (i === x.length - 1 ? { ...it, a: "The connection dropped. Try again.", shown: 0, err: true } : it)));

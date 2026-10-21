@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { getReality } from "@/reality/realities";
+import { setSuper, track } from "./analytics";
 
 export type Persona = "recruiter" | "client" | "investor" | "researcher" | null;
 export type Overlay = null | "palette" | "terminal" | "twin" | "dial" | "match" | "scope" | "game";
@@ -56,6 +57,8 @@ export const useUI = create<State>((set, get) => ({
     window.history.replaceState(window.history.state, "", url);
     set({ reality: r.id });
     window.dispatchEvent(new CustomEvent("reality:change", { detail: r.id }));
+    track("reality_changed", { reality: r.id });
+    setSuper({ reality: r.id });
   },
   setTheme: (t) => {
     persist("rc.theme", t);
@@ -67,12 +70,19 @@ export const useUI = create<State>((set, get) => ({
   setPersona: (p) => {
     persist("rc.persona", p);
     set({ persona: p });
+    if (p) {
+      track("persona_selected", { persona: p });
+      setSuper({ persona: p });
+    }
   },
   setSound: (s) => {
     persist("rc.sound", s ? "1" : null);
     set({ sound: s });
   },
-  open: (o, prompt) => set({ overlay: o, twinPrompt: prompt ?? get().twinPrompt }),
+  open: (o, prompt) => {
+    set({ overlay: o, twinPrompt: prompt ?? get().twinPrompt });
+    if (o) track("overlay_opened", { overlay: o });
+  },
   close: () => set({ overlay: null }),
 }));
 

@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/site";
 import { projects } from "@/content/projects";
+import { posts } from "@/content/blog";
 
-const PAGES = ["", "/work", "/experience", "/services", "/research", "/achievements", "/certifications", "/about", "/resume", "/contact", "/skills", "/open-source", "/match", "/scope", "/brief", "/now", "/uses", "/lab", "/status"];
+const PAGES = ["", "/work", "/experience", "/services", "/research", "/achievements", "/certifications", "/about", "/resume", "/contact", "/skills", "/open-source", "/match", "/scope", "/brief", "/now", "/uses", "/lab", "/status", "/interview", "/journey", "/blog"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const all = [...PAGES, ...projects.map((p) => `/work/${p.slug}`)];
+  const all = [...PAGES, ...projects.map((p) => `/work/${p.slug}`), ...posts.map((p) => `/blog/${p.slug}`)];
   return all.map((path) => ({
     url: `${SITE_URL}${path}`,
     lastModified: new Date(),

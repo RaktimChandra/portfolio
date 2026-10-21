@@ -3,6 +3,7 @@ import { profile } from "@/content/profile";
 import { experience } from "@/content/experience";
 import { projects, repoUrl } from "@/content/projects";
 import { awards, papers } from "@/content/record";
+import { posts } from "@/content/blog";
 
 export const dynamic = "force-static";
 
@@ -30,6 +31,9 @@ ${experience.map((e) => `- ${e.role}, ${e.org} (${e.start} to ${e.end ?? "presen
 
 ## Projects
 ${projects.map((p) => `- [${p.title}](${SITE_URL}/work/${p.slug}): ${p.tagline}${p.metrics?.length ? ` (${p.metrics.map((m) => `${m.label} ${m.value}`).join("; ")})` : ""}${repoUrl(p) ? ` — ${repoUrl(p)}` : ""}`).join("\n")}
+
+## Writing
+${posts.map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}): ${p.dek}`).join("\n")}
 
 ## Research
 ${papers.map((p) => `- ${p.title}, ${p.venue}, ${p.year}`).join("\n")}

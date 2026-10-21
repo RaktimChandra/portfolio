@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Resume from "./Resume";
 import { match } from "@/lib/matcher";
 import { profile } from "@/content/profile";
 import { Link } from "@/i18n/navigation";
+import { track } from "@/lib/analytics";
 
 const SAMPLE = `Machine Learning Engineer (New Grad)
 We're looking for an engineer to build LLM agents and RAG pipelines in Python, deploy models with Docker and FastAPI on AWS, and set up CI/CD. Experience with PyTorch, PostgreSQL, React and Kubernetes is a plus. Familiarity with Spark or Airflow helps.`;
@@ -13,6 +14,9 @@ export default function Matcher() {
   const [jd, setJd] = useState("");
   const [shown, setShown] = useState("");
   const r = useMemo(() => (shown ? match(shown) : null), [shown]);
+  useEffect(() => {
+    if (r) track("job_matched", { score: r.score, matched: r.matched.length, gaps: r.missing.length, role: r.role.slice(0, 80) });
+  }, [r]);
 
   const summary = r
     ? `${profile.role} applying${r.role ? ` for ${r.role}` : ""}. Hands-on with ${r.matched.slice(0, 8).join(", ")}${r.matched.length > 8 ? " and more" : ""}. ${profile.numbers.internships} internships, ${profile.numbers.clients} freelance clients, 7 IEEE papers. B.Tech CSE, SRMIST, 2027, CGPA ${profile.education.cgpa}.`

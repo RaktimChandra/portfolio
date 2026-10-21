@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { profile } from "@/content/profile";
+import { track } from "@/lib/analytics";
 
 const KINDS = [
   { id: "web", label: "Web app or website", weeks: 3, stack: "Next.js, TypeScript, PostgreSQL" },
@@ -80,7 +81,7 @@ export default function Scoper() {
             </ol>
             <p className="text-small"><b>Likely stack:</b> {plan.ks.map((k) => k.stack).join("; ")}.</p>
             <p className="text-small muted">A starting point, not a quote. The real estimate comes after a short call.</p>
-            <a className="btn" href={mail}>Send this to Raktim</a>
+            <a className="btn" href={mail} onClick={() => track("project_scoped", { kinds, size, weeks: plan.weeks })}>Send this to Raktim</a>
           </>
         ) : (
           <p className="muted">Pick at least one kind of work to see a plan.</p>

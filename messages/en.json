@@ -126,7 +126,9 @@
     "match": "Job matcher",
     "scope": "Project scoper",
     "skills": "Skills",
-    "journey": "Journey (3D)"
+    "journey": "Journey (3D)",
+    "interview": "Interview mode",
+    "blog": "Blog"
   },
   "notFound": {
     "title": "Missed.",

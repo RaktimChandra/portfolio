@@ -98,6 +98,36 @@ await check("status page lists demos", async () => {
   await page.goto(base + "/status", { waitUntil: "networkidle" });
   await page.getByText(/demos responding/).waitFor({ timeout: 30000 });
 });
+await check("interview mode reveals a STAR answer", async () => {
+  await page.goto(base + "/interview", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: /What's the hardest technical problem/ }).click();
+  await page.getByRole("button", { name: "Hear Raktim's answer" }).click();
+  await page.locator(".iv__star li.is-on").first().waitFor();
+});
+await check("blog post renders with a table", async () => {
+  await page.goto(base + "/blog", { waitUntil: "networkidle" });
+  await page.getByText("How we reached 0.9628 F0.5").click();
+  await page.locator(".post__table table").waitFor();
+});
+await check("Hindi case study is translated", async () => {
+  await page.goto(base + "/hi/work/bulwark", { waitUntil: "networkidle" });
+  await page.getByText("पाँच फ़्रॉड एजेंट").first().waitFor();
+});
+await check("3D project tiles render", async () => {
+  await page.goto(base + "/work", { waitUntil: "networkidle" });
+  await page.locator(".tiles3d__canvas canvas, canvas.tiles3d__canvas, .tiles3d canvas").first().waitFor({ timeout: 15000 });
+});
+await check("contact card QR and vCard", async () => {
+  const r = await page.request.get(base + "/raktim.vcf");
+  if (!(await r.text()).includes("BEGIN:VCARD")) throw new Error("no vcard");
+  await page.goto(base + "/contact", { waitUntil: "networkidle" });
+  await page.locator(".contact-card__qr svg").waitFor();
+});
+await check("twin answers an interview question", async () => {
+  const r = await page.request.post(base + "/api/ask", { data: { q: "Why should we hire him?" } });
+  const j = await r.json();
+  if (j.intent !== "interview") throw new Error(JSON.stringify(j).slice(0, 120));
+});
 await check("mobile menu opens", async () => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base, { waitUntil: "networkidle" });

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { hydrateUI, useUI } from "@/lib/store";
+import { initAnalytics, track } from "@/lib/analytics";
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
@@ -12,9 +13,26 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   // Sync store with what the boot script applied; register the service worker.
   useEffect(() => {
     hydrateUI();
+    const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    if (idle) idle(initAnalytics, { timeout: 4000 });
+    else setTimeout(initAnalytics, 2500);
+    // Key conversions, captured by delegation.
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement).closest?.("a") as HTMLAnchorElement | null;
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (href.startsWith("mailto:")) track("contact_email_clicked", { where: location.pathname });
+      else if (href.startsWith("tel:")) track("contact_phone_clicked", { where: location.pathname });
+      else if (href.endsWith(".pdf")) track("resume_downloaded", { where: location.pathname });
+      else if (href.endsWith(".vcf")) track("contact_card_saved");
+      else if (/github\.com\/RaktimChandra\/[^/]+/.test(href)) track("repo_opened", { repo: href.split("/").pop() });
+      else if (a.target === "_blank" && /^https?:/.test(href)) track("demo_opened", { url: href });
+    };
+    document.addEventListener("click", onClick);
     if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
+    return () => document.removeEventListener("click", onClick);
   }, []);
 
   // Smooth scrolling (skipped for reduced motion and touch, where native is better).

@@ -8,7 +8,7 @@ export default function PageHead({ title, lede, crumb, children }: { title: stri
           <Link href={crumb.href} className="link-u">← {crumb.label}</Link>
         </p>
       )}
-      <h1 className="page-title display" data-reveal>{title}</h1>
+      <h1 className="page-title display" data-reveal style={{ ["--len" as string]: Math.max(6, ...title.split(/\s+/).map((w) => w.length)) }}>{title}</h1>
       {lede && <div className="page-lede" data-reveal style={{ ["--i" as string]: 1 }}>{lede}</div>}
       {children}
     </header>

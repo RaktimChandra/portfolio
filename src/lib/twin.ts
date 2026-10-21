@@ -9,6 +9,7 @@ import { experience, freelance, type Experience } from "@/content/experience";
 import { DOMAIN_LABEL, featured, projects, repoUrl, type Domain, type Project } from "@/content/projects";
 import { awards, certifications, papers, research, services, skills } from "@/content/record";
 import { extractive, retrieve } from "./knowledge";
+import { interview, starText } from "@/content/interview";
 
 export type Source = { title: string; href: string };
 export type TwinAnswer = { answer: string; sources: Source[]; followups: string[]; projects?: string[]; intent: string };
@@ -146,6 +147,19 @@ const MISSING = ["rust", "golang", "kotlin", "swift", "scala", "flutter", "angul
 type Handler = { id: string; test: (q: string) => boolean; run: (q: string) => TwinAnswer | null };
 
 const H: Handler[] = [
+  {
+    id: "interview",
+    test: (q) => interview.some((x) => x.match.test(q)),
+    run: (q) => {
+      const x = interview.find((y) => y.match.test(q))!;
+      return { intent: "interview", answer: starText(x), sources: x.links, followups: ["Why should we hire him?", "What's the hardest problem he solved?", "Open interview mode"] };
+    },
+  },
+  {
+    id: "interview-mode",
+    test: (q) => /interview mode|mock interview|interview him|open interview/.test(q),
+    run: () => ({ intent: "interview-mode", answer: "Interview mode walks through the twelve questions recruiters ask most, with Raktim's answers in STAR form and links to the evidence. Open it from the link below.", sources: [{ title: "Interview mode", href: "/interview" }], followups: ["Tell me about yourself.", "Why should we hire him?"] }),
+  },
   {
     id: "greeting",
     test: (q) => /^(hi|hello|hey|yo|namaste|hola)\b/.test(q) && q.split(" ").length <= 3,

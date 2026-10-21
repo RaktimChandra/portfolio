@@ -10,7 +10,9 @@ export const NAV = [
 ] as const;
 
 export const MORE = [
+  { href: "/interview", key: "interview" },
   { href: "/journey", key: "journey" },
+  { href: "/blog", key: "blog" },
   { href: "/achievements", key: "achievements" },
   { href: "/certifications", key: "certifications" },
   { href: "/skills", key: "skills" },

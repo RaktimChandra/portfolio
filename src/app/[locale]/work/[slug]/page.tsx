@@ -2,7 +2,10 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import PageHead from "@/components/PageHead";
-import { DOMAIN_LABEL, getProject, projects, repoUrl } from "@/content/projects";
+import { DOMAIN_LABEL, factLine, getProject, projects, repoUrl } from "@/content/projects";
+import DemoVideo from "@/components/DemoVideo";
+import { localize } from "@/content/i18n";
+import TrackView from "@/components/TrackView";
 import { routing } from "@/i18n/routing";
 import { meta } from "@/lib/page";
 
@@ -14,19 +17,20 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: P) {
   const { locale, slug } = await params;
-  const p = getProject(slug);
-  if (!p) return {};
+  const b = getProject(slug);
+  if (!b) return {};
+  const p = localize(b, locale);
   return meta(p.title, `${p.tagline} ${p.summary}`.slice(0, 300), `/work/${p.slug}`, locale);
 }
 
 export default async function CaseStudy({ params }: P) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const p = getProject(slug);
-  if (!p) notFound();
+  const base = getProject(slug);
+  if (!base) notFound();
+  const p = localize(base, locale);
   const t = await getTranslations("work");
-  const tc = await getTranslations("common");
-  const i = projects.indexOf(p);
+  const i = projects.indexOf(base);
   const next = projects[(i + 1) % projects.length];
   const code = repoUrl(p);
 
@@ -43,9 +47,9 @@ export default async function CaseStudy({ params }: P) {
 
   return (
     <article className="page wrap">
+      <TrackView event="project_opened" props={{ slug: p.slug, title: p.title, featured: !!p.featured }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <PageHead title={p.title} lede={p.tagline} crumb={{ href: "/work", label: t("back") }} />
-      {locale !== "en" && <p className="muted text-small" style={{ marginTop: "-1.5rem", marginBottom: "2rem" }}>{tc("englishOnly")}</p>}
 
       {!!p.metrics?.length && (
         <section aria-label={t("results")}>
@@ -59,6 +63,16 @@ export default async function CaseStudy({ params }: P) {
           </dl>
         </section>
       )}
+
+      {p.video ? (
+        <DemoVideo src={p.video} title={p.title} />
+      ) : p.featured ? (
+        <div className="demo-video demo-video--empty panel" data-title="Demo">
+          <p className="text-small muted">30-second demo</p>
+          <p>A screen recording of {p.title} running end to end is being cut.{p.demo ? " Meanwhile, the live version is one click away." : ""}</p>
+          {p.demo && <a className="btn btn-quiet" href={p.demo} target="_blank" rel="noopener">Open the live demo ↗</a>}
+        </div>
+      ) : null}
 
       <div className="case">
         <div className="prose">
@@ -88,6 +102,9 @@ export default async function CaseStudy({ params }: P) {
             <div><dt className="text-small muted">Year</dt><dd className="tabular">{p.year}</dd></div>
             <div><dt className="text-small muted">Status</dt><dd style={{ textTransform: "capitalize" }}>{p.status}</dd></div>
             <div><dt className="text-small muted">Areas</dt><dd>{p.domains.map((d) => DOMAIN_LABEL[d]).join(", ")}</dd></div>
+            {factLine(p) && (
+              <div><dt className="text-small muted">From the repository</dt><dd>{factLine(p)}</dd></div>
+            )}
             {!!p.stack.length && (
               <div><dt className="text-small muted">{t("stack")}</dt><dd className="card__meta" style={{ marginTop: 6 }}>{p.stack.map((s) => <span className="tag" key={s}>{s}</span>)}</dd></div>
             )}

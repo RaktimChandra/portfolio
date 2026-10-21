@@ -3,6 +3,7 @@ import { profile } from "@/content/profile";
 import { experience, freelance } from "@/content/experience";
 import { projects, repoUrl } from "@/content/projects";
 import { awards, certifications, papers, research, services, skills } from "@/content/record";
+import { posts } from "@/content/blog";
 
 export type Doc = { id: string; title: string; kind: string; href: string; text: string; tags: string };
 
@@ -99,6 +100,9 @@ export function buildDocs(): Doc[] {
     text: Object.entries(skills).map(([k, v]) => `${k}: ${v.join(", ")}`).join(". "),
     tags: "skills stack technologies languages tools",
   });
+  for (const p of posts) {
+    docs.push({ id: `post-${p.slug}`, title: p.title, kind: "post", href: `/blog/${p.slug}`, text: `${p.title}. ${p.dek} ${p.body.map((b) => (b.t === "p" || b.t === "h2" || b.t === "quote" ? b.x : b.t === "ul" ? b.x.join(" ") : "")).join(" ")}`, tags: `blog post ${p.tags.join(" ")}` });
+  }
   return docs;
 }
 
