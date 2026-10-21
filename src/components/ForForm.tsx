@@ -22,7 +22,7 @@ export default function ForForm() {
         router.push(`/for/${slug}?site=${encodeURIComponent(host)}`);
       }}
     >
-      <label htmlFor="co" className="text-small muted">Your company's website</label>
+      <label htmlFor="co" className="text-small muted">Your company&apos;s website</label>
       <div className="demo__row">
         <input id="co" className="demo__input" value={v} onChange={(e) => (setV(e.target.value), setErr(""))} placeholder="stripe.com" inputMode="url" autoComplete="url" maxLength={200} />
         <button className="btn" type="submit" disabled={!v.trim()}>Tailor it</button>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./globals.css";
 
 export default function GlobalNotFound() {
@@ -6,7 +7,7 @@ export default function GlobalNotFound() {
       <body style={{ display: "grid", placeItems: "center", minHeight: "100svh", padding: 24 }}>
         <div>
           <h1 className="display" style={{ fontSize: "clamp(4rem, 20vw, 12rem)" }}>404</h1>
-          <p><a className="link-u" href="/">Back to Raktim Chandra&apos;s home page</a></p>
+          <p><Link className="link-u" href="/">Back to Raktim Chandra&apos;s home page</Link></p>
         </div>
       </body>
     </html>

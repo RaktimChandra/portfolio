@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { useUI } from "@/lib/store";
@@ -15,6 +15,12 @@ const SUGGEST = ["Tell me about yourself.", "What's the hardest problem he solve
 
 type SR = { start: () => void; stop: () => void; onresult: (e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void; onend: () => void; onerror: () => void; lang: string; interimResults: boolean };
 
+const noopSub = () => () => {};
+const hasSpeechInput = () => {
+  const W = window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown };
+  return !!(W.SpeechRecognition || W.webkitSpeechRecognition);
+};
+
 /** The AI twin. `variant="headline"` is the large type input on the home page. */
 export default function TwinBox({ variant = "panel", initial = "" }: { variant?: "panel" | "headline"; initial?: string }) {
   const t = useTranslations("home");
@@ -23,7 +29,7 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
   const [busy, setBusy] = useState(false);
   const [listening, setListening] = useState(false);
   const [speakOn, setSpeakOn] = useState(false);
-  const [canVoice, setCanVoice] = useState(false);
+  const canVoice = useSyncExternalStore(noopSub, hasSpeechInput, () => false);
   const scroller = useRef<HTMLDivElement>(null);
   const sent = useRef(false);
   const rec = useRef<SR | null>(null);
@@ -34,10 +40,6 @@ export default function TwinBox({ variant = "panel", initial = "" }: { variant?:
   const [level, setLevel] = useState(0);
 
 
-  useEffect(() => {
-    const W = window as unknown as { SpeechRecognition?: new () => SR; webkitSpeechRecognition?: new () => SR };
-    setCanVoice(!!(W.SpeechRecognition || W.webkitSpeechRecognition));
-  }, []);
 
   // Typewriter reveal of the newest answer.
   useEffect(() => {

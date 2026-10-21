@@ -1,26 +1,29 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { useCaps } from "@/lib/device";
 import { SITE_URL } from "@/lib/site";
 import { track } from "@/lib/analytics";
 
 const CardViewer = dynamic(() => import("@/three/CardViewer"), { ssr: false });
 
+const noop = () => () => {};
+function readOS(): "ios" | "android" | "other" {
+  const ua = navigator.userAgent;
+  return /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "other";
+}
+
 /** My business card in 3D. On a phone, one tap puts it on the table in front of you (Scene Viewer on Android, Quick Look on iPhone). */
 export default function ARCard() {
-  const [os, setOs] = useState<"ios" | "android" | "other">("other");
-  const [gl, setGl] = useState(false);
-  useEffect(() => {
-    const ua = navigator.userAgent;
-    setOs(/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) ? "ios" : /Android/.test(ua) ? "android" : "other");
-    try { setGl(!!document.createElement("canvas").getContext("webgl2")); } catch {}
-  }, []);
+  const os = useSyncExternalStore(noop, readOS, () => "other" as const);
+  const { gl, lite } = useCaps();
+  const show3d = gl && !lite;
   const glb = `${SITE_URL}/card.glb`;
   const android = `intent://arvr.google.com/scene-viewer/1.2?file=${encodeURIComponent(glb)}&mode=ar_preferred&title=${encodeURIComponent("Raktim Chandra")}#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(SITE_URL + "/contact")};end;`;
   return (
     <section className="arcard panel" data-title="AR card">
-      <div className="arcard__view">{gl ? <CardViewer /> : <p className="muted">3D needs WebGL.</p>}</div>
+      <div className="arcard__view">{show3d ? <CardViewer /> : <p className="arcard__flat" aria-hidden="true"><b>RAKTIM CHANDRA</b><span>AI, ML and full-stack engineer</span></p>}</div>
       <div className="arcard__body">
         <h2 className="card__title">Put my card on your desk</h2>
         <p className="muted">An 85 × 50 mm card, true to size. The front has my contact and a QR code; turn it over for the motto.</p>

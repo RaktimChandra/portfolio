@@ -27,9 +27,12 @@ export default function Header() {
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
+  // Close the menu when the route changes (adjusting state during render, not in an effect).
+  const [menuPath, setMenuPath] = useState(pathname);
+  if (menuPath !== pathname) {
+    setMenuPath(pathname);
     setMenu(false);
-  }, [pathname]);
+  }
   useEffect(() => {
     const on = () => setScrolled(window.scrollY > 24);
     on();

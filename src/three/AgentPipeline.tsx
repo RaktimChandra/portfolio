@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useCaps } from "@/lib/device";
 import { cssColor, labelTexture } from "./util";
 import { Link } from "@/i18n/navigation";
 
@@ -109,7 +110,8 @@ export default function AgentPipeline() {
   const stage = useRef(0);
   const [live, setLive] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
-  const colors = useMemo(() => (typeof window === "undefined" ? null : { accent: cssColor("--accent", "#b08f74"), ink: cssColor("--ink", "#f2f2f2") }), []);
+  const { rich } = useCaps();
+  const colors = useMemo(() => (typeof window === "undefined" || !rich ? null : { accent: cssColor("--accent", "#b08f74"), ink: cssColor("--ink", "#f2f2f2") }), [rich]);
 
   useEffect(() => {
     const io = new IntersectionObserver(([e]) => setLive(e.isIntersecting), { threshold: 0.15 });
@@ -146,7 +148,7 @@ export default function AgentPipeline() {
       <div className="pipe__side">
         <div className="pipe__tabs" role="tablist" aria-label="Choose an input">
           {SCENARIOS.map((x, i) => (
-            <button key={x.id} role="tab" aria-selected={i === sc} className="chip" aria-pressed={i === sc} onClick={() => (setSc(i), setSt(0))}>{x.name}</button>
+            <button key={x.id} role="tab" aria-selected={i === sc} className="chip" onClick={() => (setSc(i), setSt(0))}>{x.name}</button>
           ))}
         </div>
         <ol className="pipe__steps">

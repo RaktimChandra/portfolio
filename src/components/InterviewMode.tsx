@@ -16,10 +16,14 @@ export default function InterviewMode() {
   const x = interview[i];
   const parts = x.star ? STEPS.length : 1;
 
-  useEffect(() => {
+  const [shownFor, setShownFor] = useState(i);
+  if (shownFor !== i) {
+    setShownFor(i);
     setShown(0);
+  }
+  useEffect(() => {
     track("interview_question", { id: x.id });
-  }, [i, x.id]);
+  }, [x.id]);
   useEffect(() => {
     if (!auto) return;
     const id = setTimeout(() => {

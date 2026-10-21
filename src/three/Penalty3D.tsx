@@ -66,7 +66,7 @@ function Keeper({ color, pose }: { color: string; pose: React.RefObject<{ x: num
 
 function Scene({ accent, onResult, phase, setPhase }: { accent: string; onResult: (r: Result) => void; phase: Phase; setPhase: (p: Phase) => void }) {
   const { camera } = useThree();
-  const pitch = useMemo(pitchTexture, []);
+  const pitch = useMemo(() => pitchTexture(), []);
   const ball = useRef<THREE.Mesh>(null);
   const aim = useRef<THREE.Mesh>(null);
   const target = useRef(new THREE.Vector3(0, 1, 0));
@@ -175,8 +175,7 @@ export default function Penalty3D() {
   const accent = useMemo(() => `#${cssColor("--accent", "#b08f74").getHexString()}`, []);
   const [phase, setPhase] = useState<Phase>("aim");
   const [log, setLog] = useState<Result[]>([]);
-  const [best, setBest] = useState(0);
-  useEffect(() => { try { setBest(Number(localStorage.getItem("rc.pens") || 0)); } catch {} }, []);
+  const [best, setBest] = useState(() => { try { return Number(localStorage.getItem("rc.pens") || 0); } catch { return 0; } });
   const goals = log.filter((r) => r === "goal").length;
   const over = log.length >= 5;
   const onResult = (r: Result) => {

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { journey, KIND_COLOR } from "@/content/journey";
+import { useCaps } from "@/lib/device";
 
 const JourneyScene = dynamic(() => import("@/three/JourneyScene"), { ssr: false });
 
@@ -11,12 +12,9 @@ export default function Journey() {
   const section = useRef<HTMLDivElement>(null);
   const progress = useRef(0);
   const [i, setI] = useState(0);
-  const [three, setThree] = useState(false);
+  const three = useCaps().rich;
 
   useEffect(() => {
-    let gl = null;
-    try { gl = document.createElement("canvas").getContext("webgl2"); } catch {}
-    setThree(!!gl && !matchMedia("(prefers-reduced-motion: reduce)").matches);
     const on = () => {
       const el = section.current;
       if (!el) return;

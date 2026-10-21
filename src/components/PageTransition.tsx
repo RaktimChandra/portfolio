@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { getCaps } from "@/lib/device";
 
 /*
  * A full-screen shader wipe between pages. Each reality gets its own pattern:
@@ -64,7 +65,7 @@ export default function PageTransition() {
   const pending = useRef(false);
 
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (getCaps().reduced || getCaps().lite) return;
     const cv = ref.current!;
     const gl = cv.getContext("webgl2", { premultipliedAlpha: false, alpha: true });
     if (!gl) return;

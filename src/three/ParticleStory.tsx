@@ -137,13 +137,16 @@ function Cloud({ progress }: { progress: React.RefObject<number> }) {
     [size.width, z],
   );
   const shown = useRef(0);
+  const pts = useRef<THREE.Points>(null);
   useFrame((s, dt) => {
+    const m = pts.current?.material as THREE.ShaderMaterial | undefined;
+    if (!m) return;
     shown.current += ((progress.current ?? 0) - shown.current) * Math.min(1, dt * 6);
-    mat.uniforms.p.value = shown.current;
-    mat.uniforms.t.value = s.clock.elapsedTime;
-    mat.uniforms.spin.value = s.clock.elapsedTime * 0.25;
+    m.uniforms.p.value = shown.current;
+    m.uniforms.t.value = s.clock.elapsedTime;
+    m.uniforms.spin.value = s.clock.elapsedTime * 0.25;
   });
-  return <points geometry={geo} material={mat} />;
+  return <points ref={pts} geometry={geo} material={mat} />;
 }
 
 export default function ParticleStory({ progress, live }: { progress: React.RefObject<number>; live: boolean }) {

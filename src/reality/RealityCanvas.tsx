@@ -1,4 +1,5 @@
 "use client";
+import { getCaps } from "@/lib/device";
 
 import { useEffect, useRef } from "react";
 import { VERTEX } from "./shaders/lib";
@@ -77,7 +78,7 @@ export default function RealityCanvas() {
     // Software rasterisers (no GPU) get one still frame instead of an animation loop.
     const dbg = gl.getExtension("WEBGL_debug_renderer_info");
     const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : "";
-    const still = /swiftshader|llvmpipe|software|basic render/i.test(renderer);
+    const still = /swiftshader|llvmpipe|software|basic render/i.test(renderer) || getCaps().lite;
     // Pixel-art realities stay sharp; everything else renders at reduced resolution.
     const SHARP = new Set(["teletext", "dither1bit", "retrodesktop", "web1", "memphis", "opart", "datamosh"]);
     let scale = 0.5;
@@ -90,7 +91,7 @@ export default function RealityCanvas() {
     let last = 0;
     const start = performance.now();
 
-    const use = (id: string) => {
+    const applyReality = (id: string) => {
       if (!shaders || !vs) return;
       const src = shaders[id] ?? shaders.glass;
       const fs = compile(gl, gl.FRAGMENT_SHADER, src);
@@ -175,7 +176,7 @@ export default function RealityCanvas() {
     };
     const onReality = () => {
       readColors();
-      use(document.documentElement.dataset.reality || "glass");
+      applyReality(document.documentElement.dataset.reality || "glass");
       if (reduce.matches || still) draw(performance.now());
     };
 
@@ -187,7 +188,7 @@ export default function RealityCanvas() {
       import("./shaders").then((m) => {
         shaders = m.SHADERS;
         readColors();
-        use(document.documentElement.dataset.reality || "glass");
+        applyReality(document.documentElement.dataset.reality || "glass");
         canvas.dataset.ready = "1";
         raf = requestAnimationFrame(loop);
         draw(performance.now());

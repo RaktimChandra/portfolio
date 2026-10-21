@@ -37,12 +37,12 @@ export default function DebateSim() {
   const [playing, setPlaying] = useState(false);
   const log = useRef<HTMLOListElement>(null);
   useEffect(() => {
-    if (!playing) return;
-    if (n >= SCRIPT.length) return setPlaying(false);
+    if (!playing || n >= SCRIPT.length) return;
     const t = setTimeout(() => {
       const ev = SCRIPT[n];
       if (ev.set) setClaims((cs) => cs.map((c) => ({ ...c, ...(ev.set![c.id] ?? {}) })));
       setN(n + 1);
+      if (n + 1 >= SCRIPT.length) setPlaying(false);
     }, n === 0 ? 300 : 1500);
     return () => clearTimeout(t);
   }, [playing, n]);

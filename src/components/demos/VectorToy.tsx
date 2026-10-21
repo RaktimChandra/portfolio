@@ -65,16 +65,15 @@ const dist = (m: Metric, a: Float32Array, b: Float32Array) => {
 };
 
 export default function VectorToy() {
-  const idx = useMemo(build, []);
+  const idx = useMemo(() => build(), []);
   const [q, setQ] = useState("offline AI on a cheap laptop");
   const [m, setM] = useState<Metric>("cosine");
   const res = useMemo(() => {
-    const t0 = performance.now();
     const tf = new Float32Array(D);
     grams(q).forEach((g) => tf[g]++);
     const qv = idx.embed(tf);
     const ranked = idx.vecs.map((v, i) => ({ i, d: dist(m, qv, v) })).sort((a, b) => a.d - b.d).slice(0, 5);
-    return { ranked, qp: idx.proj(qv), ms: performance.now() - t0 };
+    return { ranked, qp: idx.proj(qv) };
   }, [q, m, idx]);
   const xs = idx.pts.map((p) => p[0]), ys = idx.pts.map((p) => p[1]);
   // Robust bounds (5th–95th percentile) so a few outliers don't squash the map; outliers sit at the edge.
@@ -106,7 +105,7 @@ export default function VectorToy() {
           <circle cx={sx(res.qp[0])} cy={sy(res.qp[1])} r="7" fill="none" stroke="var(--accent)" strokeWidth="2.5" />
         </svg>
       </div>
-      <p className="text-small muted">Brute-force search over {idx.docs.length} projects in {res.ms.toFixed(1)} ms, in your browser. Vectors are hashed character trigrams with TF-IDF, not a neural embedding; the real VectorEngine adds HNSW and KD-tree indexes and 768-dimension embeddings.</p>
+      <p className="text-small muted">Brute-force search over {idx.docs.length} projects, live in your browser as you type. Vectors are hashed character trigrams with TF-IDF, not a neural embedding; the real VectorEngine adds HNSW and KD-tree indexes and 768-dimension embeddings.</p>
     </div>
   );
 }

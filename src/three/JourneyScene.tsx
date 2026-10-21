@@ -67,7 +67,7 @@ function makeCurve() {
 
 function World({ progress }: { progress: React.MutableRefObject<number> }) {
   const { camera } = useThree();
-  const curve = useMemo(makeCurve, []);
+  const curve = useMemo(() => makeCurve(), []);
   const tube = useMemo(() => new THREE.TubeGeometry(curve, 600, 0.05, 8, false), [curve]);
   const smooth = useRef(0);
   const cards = useMemo(
@@ -85,10 +85,12 @@ function World({ progress }: { progress: React.MutableRefObject<number> }) {
   const stars = useMemo(() => {
     const g = new THREE.BufferGeometry();
     const arr = new Float32Array(2400 * 3);
+    let seed = 7;
+    const rand = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
     for (let i = 0; i < 2400; i++) {
-      arr[i * 3] = (Math.random() - 0.5) * 60;
-      arr[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      arr[i * 3 + 2] = -Math.random() * (journey.length + 3) * 7 + 10;
+      arr[i * 3] = (rand() - 0.5) * 60;
+      arr[i * 3 + 1] = (rand() - 0.5) * 40;
+      arr[i * 3 + 2] = -rand() * (journey.length + 3) * 7 + 10;
     }
     g.setAttribute("position", new THREE.BufferAttribute(arr, 3));
     return g;

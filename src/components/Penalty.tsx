@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { blip } from "@/lib/sound";
 
+/** Kept outside render so it reads as an event-time choice. */
+const roll = (n: number) => Math.floor(Math.random() * n);
+
 const SPOTS = [
   [12, 62], [47, 62], [82, 62],
   [12, 18], [47, 18], [82, 18],
@@ -17,10 +20,10 @@ export default function Penalty() {
   const [msg, setMsg] = useState("Pick a corner.");
 
   const shoot = (i: number) => {
-    const k = Math.floor(Math.random() * 6);
+    const k = roll(6);
     setBall(SPOTS[i] as [number, number]);
     setKeeper(k);
-    const saved = k === i || (Math.abs(k - i) === 3 && Math.random() < 0.5);
+    const saved = k === i || (Math.abs(k - i) === 3 && roll(2) === 0);
     setShots((s) => s + 1);
     if (!saved) setGoals((g) => g + 1);
     setMsg(saved ? "Saved. The keeper guessed right." : "Goal. Top bins.");

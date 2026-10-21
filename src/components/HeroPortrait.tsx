@@ -2,24 +2,22 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { useCaps } from "@/lib/device";
 
 const Room = dynamic(() => import("@/three/Room"), { ssr: false });
 
 /** The 3D desk. Before WebGL loads (or with reduced motion) a plain list of the same doors. */
 export default function HeroPortrait() {
-  const [three, setThree] = useState(false);
+  const { rich } = useCaps();
+  const [ready, setReady] = useState(false);
+  const three = rich && ready;
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let gl: WebGL2RenderingContext | null = null;
-    try {
-      gl = document.createElement("canvas").getContext("webgl2");
-    } catch {}
-    if (!gl) return;
-    const go = () => setThree(true);
+    if (!rich) return;
+    const go = () => setReady(true);
     const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
     if (idle) idle(go, { timeout: 1500 });
     else setTimeout(go, 500);
-  }, []);
+  }, [rich]);
   return (
     <div className="hero__portrait">
       {three ? (

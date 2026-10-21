@@ -1,19 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import { architecture } from "@/content/architecture";
+import { useCaps } from "@/lib/device";
 
 const Arch3D = dynamic(() => import("@/three/Arch3D"), { ssr: false });
 
 /** A case study's system as a 3D graph, with the same structure as a plain list underneath for readers and crawlers. */
 export default function Architecture({ slug, title }: { slug: string; title: string }) {
   const arch = architecture[slug];
-  const [gl, setGl] = useState(false);
-  useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    try { setGl(!!document.createElement("canvas").getContext("webgl2")); } catch {}
-  }, []);
+  const gl = useCaps().rich;
   if (!arch) return null;
   const byId = Object.fromEntries(arch.nodes.map((n) => [n.id, n.label]));
   return (

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { profile } from "@/content/profile";
+import { useCaps } from "@/lib/device";
 
 const ParticleStory = dynamic(() => import("@/three/ParticleStory"), { ssr: false });
 
@@ -19,13 +20,8 @@ export default function ParticleSection() {
   const sec = useRef<HTMLElement>(null);
   const progress = useRef(0);
   const [stage, setStage] = useState(0);
-  const [gl, setGl] = useState(false);
+  const gl = useCaps().rich;
   const [near, setNear] = useState(false);
-
-  useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    try { setGl(!!document.createElement("canvas").getContext("webgl2")); } catch {}
-  }, []);
 
   useEffect(() => {
     if (!gl) return;

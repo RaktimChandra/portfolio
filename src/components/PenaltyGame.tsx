@@ -1,17 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
 import Penalty from "./Penalty";
+import { useCaps } from "@/lib/device";
 
-const Penalty3D = dynamic(() => import("@/three/Penalty3D"), { ssr: false });
+const Penalty3D = dynamic(() => import("@/three/Penalty3D"), { ssr: false, loading: () => <div className="pens" /> });
 
-/** 3D penalty when WebGL2 is there; the flat six-zone version otherwise. */
+/** 3D penalty when the device can take it; the flat six-zone version on low-end phones or without WebGL. */
 export default function PenaltyGame() {
-  const [gl, setGl] = useState<boolean | null>(null);
-  useEffect(() => {
-    try { setGl(!!document.createElement("canvas").getContext("webgl2")); } catch { setGl(false); }
-  }, []);
-  if (gl === null) return <div className="pens" />;
-  return gl ? <Penalty3D /> : <Penalty />;
+  const { gl, lite } = useCaps();
+  return gl && !lite ? <Penalty3D /> : <Penalty />;
 }
