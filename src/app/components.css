@@ -640,8 +640,9 @@ main { overflow-x: clip; }
 .gb__form { display: grid; gap: 0.8rem; padding: 1.3rem; }
 .gb__form label { display: grid; gap: 0.3rem; font-size: var(--step-small); color: var(--muted); }
 .gb__row { display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
-.gb__hp { position: absolute !important; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.gb__hp { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; opacity: 0; }
 .gb__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.8rem; }
 .gb__note { padding: 1rem 1.2rem; border-radius: var(--radius); background: var(--panel-bg); border: var(--panel-border); }
 .gb__note p { margin: 0; overflow-wrap: anywhere; }
 .gb__note p + p { margin-top: 0.4rem; }
+.gb__form { position: relative; }
