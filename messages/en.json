@@ -94,7 +94,8 @@
     "back": "All work",
     "constellation": "Constellation",
     "list": "List",
-    "count": "{count} projects"
+    "count": "{count} projects",
+    "system": "How the system fits together"
   },
   "common": {
     "readMore": "Read more",
@@ -132,7 +133,7 @@
   },
   "notFound": {
     "title": "Missed.",
-    "body": "This page isn't here. Take a penalty while you're at it: click a corner to shoot.",
+    "body": "This page isn't here. Take a penalty while you're at it: aim at the goal and click to shoot.",
     "home": "Back to the home page"
   }
 }

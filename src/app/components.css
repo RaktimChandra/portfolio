@@ -527,3 +527,10 @@ main { overflow-x: clip; }
 .pens__dots i[data-r="goal"] { background: #3fcf8e; border-color: #3fcf8e; }
 .pens__dots i:is([data-r="saved"], [data-r="wide"], [data-r="over"], [data-r="post"]) { background: #e5484d; border-color: #e5484d; }
 @media (max-width: 600px) { .pens { aspect-ratio: 3 / 4; } }
+.arch { display: grid; gap: 0.6rem; margin-block: 2.5rem; }
+.arch h2 { font-size: var(--step-2, 1.6rem); }
+.arch3d { position: relative; height: clamp(360px, 52vw, 560px); border-radius: var(--radius); background: var(--panel-bg); border: var(--panel-border); overflow: hidden; cursor: grab; }
+.arch3d canvas { touch-action: pan-y; }
+.arch3d__note { position: absolute; left: 1rem; right: 1rem; bottom: 0.8rem; margin: 0; font-size: var(--step-small); color: var(--ink); pointer-events: none; }
+.arch__list { display: grid; gap: 0.3rem; padding-left: 1.2rem; }
+@media (max-width: 700px) { .arch3d { height: min(130vw, 640px); } }

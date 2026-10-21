@@ -6,6 +6,7 @@ import { DOMAIN_LABEL, factLine, getProject, projects, repoUrl } from "@/content
 import DemoVideo from "@/components/DemoVideo";
 import { localize } from "@/content/i18n";
 import TrackView from "@/components/TrackView";
+import Architecture from "@/components/Architecture";
 import { routing } from "@/i18n/routing";
 import { meta } from "@/lib/page";
 
@@ -73,6 +74,8 @@ export default async function CaseStudy({ params }: P) {
           {p.demo && <a className="btn btn-quiet" href={p.demo} target="_blank" rel="noopener">Open the live demo ↗</a>}
         </div>
       ) : null}
+
+      <Architecture slug={p.slug} title={t("system")} />
 
       <div className="case">
         <div className="prose">
