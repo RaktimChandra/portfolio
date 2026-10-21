@@ -61,10 +61,10 @@ export default function Header() {
             className="chip chip--reality"
             onClick={() => (blip("open"), open("dial"))}
             title={tc("realityHint")}
-            aria-label={`${tc("reality")}: ${r.name}. ${tc("realityHint")}`}
           >
             <span className="swatch" aria-hidden="true" style={{ background: `linear-gradient(135deg, ${r.swatch[0]} 0 50%, ${r.swatch[2]} 50%)` }} />
             <span className="chip__label">{r.name}</span>
+            <span className="sr-only">, {tc("reality")}</span>
             <span className="chip__count tabular" aria-hidden="true">{String(idx).padStart(2, "0")}/21</span>
           </button>
           <button
@@ -95,8 +95,8 @@ export default function Header() {
               </button>
             ))}
           </div>
-          <button type="button" className="chip chip--kbd" onClick={() => open("palette")} aria-label={tc("palette")}>
-            <kbd>⌘K</kbd>
+          <button type="button" className="chip chip--kbd" onClick={() => open("palette")} title={tc("palette")}>
+            <kbd>⌘K</kbd><span className="sr-only">{tc("palette")}</span>
           </button>
           <button type="button" className="chip site-header__menu" aria-expanded={menu} aria-controls="mobile-menu" onClick={() => setMenu((m) => !m)}>
             {menu ? t("close") : t("menu")}

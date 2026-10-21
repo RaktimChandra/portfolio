@@ -1,10 +1,7 @@
 import localFont from "next/font/local";
 
 export const archivo = localFont({
-  src: [
-    { path: "../fonts/archivo-latin-wdth-normal.woff2", weight: "100 900", style: "normal" },
-    { path: "../fonts/archivo-latin-ext-wdth-normal.woff2", weight: "100 900", style: "normal" },
-  ],
+  src: [{ path: "../fonts/archivo-latin-wdth-normal.woff2", weight: "100 900", style: "normal" }],
   variable: "--font-archivo",
   display: "swap",
   declarations: [{ prop: "font-stretch", value: "62% 125%" }],

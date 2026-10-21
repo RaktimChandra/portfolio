@@ -74,6 +74,10 @@ export default function RealityCanvas() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const coarse = window.matchMedia("(pointer: coarse)").matches;
     const lowEnd = (navigator.hardwareConcurrency || 8) <= 4 || coarse;
+    // Software rasterisers (no GPU) get one still frame instead of an animation loop.
+    const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : "";
+    const still = /swiftshader|llvmpipe|software|basic render/i.test(renderer);
     // Pixel-art realities stay sharp; everything else renders at reduced resolution.
     const SHARP = new Set(["teletext", "dither1bit", "retrodesktop", "web1", "memphis", "opart", "datamosh"]);
     let scale = 0.5;
@@ -127,7 +131,7 @@ export default function RealityCanvas() {
         canvas.height = h;
       }
       gl.viewport(0, 0, w, h);
-      if (reduce.matches) draw(performance.now());
+      if (reduce.matches || still) draw(performance.now());
     };
 
     const draw = (now: number) => {
@@ -136,7 +140,7 @@ export default function RealityCanvas() {
       mouse.x += (mouse.tx - mouse.x) * 0.06;
       mouse.y += (mouse.ty - mouse.y) * 0.06;
       gl.uniform2f(u.u_res, canvas.width, canvas.height);
-      gl.uniform1f(u.u_time, reduce.matches ? 12.0 : (now - start) / 1000);
+      gl.uniform1f(u.u_time, reduce.matches || still ? 12.0 : (now - start) / 1000);
       gl.uniform2f(u.u_mouse, mouse.x, mouse.y);
       gl.uniform1f(u.u_scroll, scroll);
       gl.uniform3f(u.u_bg, colors.bg[0], colors.bg[1], colors.bg[2]);
@@ -149,7 +153,7 @@ export default function RealityCanvas() {
     const frameInterval = lowEnd ? 1000 / 30 : 1000 / 45;
     const loop = (now: number) => {
       raf = requestAnimationFrame(loop);
-      if (!running || !visible || reduce.matches) return;
+      if (!running || !visible || reduce.matches || still) return;
       if (now - last < frameInterval) return;
       last = now;
       draw(now);
@@ -172,7 +176,7 @@ export default function RealityCanvas() {
     const onReality = () => {
       readColors();
       use(document.documentElement.dataset.reality || "glass");
-      if (reduce.matches) draw(performance.now());
+      if (reduce.matches || still) draw(performance.now());
     };
 
     const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
@@ -189,7 +193,7 @@ export default function RealityCanvas() {
         draw(performance.now());
       });
     const idle = (window as unknown as { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-    if (idle) idle(loadShaders, { timeout: 1200 });
+    if (idle) idle(loadShaders, { timeout: 2500 });
     else setTimeout(loadShaders, 300);
 
     window.addEventListener("resize", resize);

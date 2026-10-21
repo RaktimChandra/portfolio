@@ -355,3 +355,4 @@
   border-radius: var(--radius);
 }
 :is([data-reality="opart"], [data-reality="datamosh"], [data-reality="psychedelic"], [data-reality="teletext"], [data-reality="dither1bit"], [data-reality="memphis"]) .hero__top { margin-top: 0.75rem; gap: 1.5rem; }
+:is([data-reality="opart"], [data-reality="datamosh"], [data-reality="psychedelic"], [data-reality="teletext"], [data-reality="dither1bit"], [data-reality="memphis"], [data-reality="wordart"]) .site-header { background: var(--bg); }

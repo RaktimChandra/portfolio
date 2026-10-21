@@ -2,7 +2,6 @@
 
 import { Command } from "cmdk";
 import { useTranslations } from "next-intl";
-import { toast } from "sonner";
 import Modal from "./Modal";
 import { useRouter } from "@/i18n/navigation";
 import { useUI } from "@/lib/store";
@@ -41,7 +40,7 @@ export default function CommandPalette() {
             <Command.Item onSelect={() => open("twin")}>Ask the AI twin a question</Command.Item>
             <Command.Item onSelect={() => go("/match")}>Match me against a job description</Command.Item>
             <Command.Item onSelect={() => go("/scope")}>Scope a project with me</Command.Item>
-            <Command.Item onSelect={() => { navigator.clipboard?.writeText(profile.email); toast.success(`Copied ${profile.email}`); close(); }}>Copy email address</Command.Item>
+            <Command.Item onSelect={() => { navigator.clipboard?.writeText(profile.email); window.dispatchEvent(new CustomEvent("toast", { detail: `Copied ${profile.email}` })); close(); }}>Copy email address</Command.Item>
             <Command.Item onSelect={() => { close(); window.open("/resume.pdf", "_blank"); }}>Download résumé (PDF)</Command.Item>
             <Command.Item onSelect={() => { toggleTheme(); close(); }}>Toggle light and dark</Command.Item>
             <Command.Item onSelect={() => { setSound(!sound); close(); }}>{sound ? "Turn sound off" : "Turn sound on"}</Command.Item>

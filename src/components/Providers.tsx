@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 import { hydrateUI, useUI } from "@/lib/store";
-import { Toaster } from "sonner";
 
 const KONAMI = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
 
@@ -112,6 +111,19 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Tiny toast: window.dispatchEvent(new CustomEvent("toast", { detail: "text" }))
+  const [toast, setToast] = useState("");
+  useEffect(() => {
+    let t: ReturnType<typeof setTimeout>;
+    const on = (e: Event) => {
+      setToast(String((e as CustomEvent).detail ?? ""));
+      clearTimeout(t);
+      t = setTimeout(() => setToast(""), 2200);
+    };
+    window.addEventListener("toast", on);
+    return () => window.removeEventListener("toast", on);
+  }, []);
+
   // Lock page scroll under overlays.
   const overlay = useUI((s) => s.overlay);
   useEffect(() => {
@@ -121,7 +133,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       {children}
-      <Toaster position="bottom-center" toastOptions={{ style: { background: "var(--surface)", color: "var(--ink)", border: "1px solid color-mix(in oklab, var(--ink) 12%, transparent)" } }} />
+      <div className="toast" role="status" aria-live="polite" data-on={toast ? "1" : undefined}>{toast}</div>
     </>
   );
 }

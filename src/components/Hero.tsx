@@ -70,13 +70,13 @@ export default function Hero() {
       </div>
 
       <div className="wrap hero__body">
-        <p className="hero__line" data-reveal>{t("line")}</p>
-        <div className="hero__cta" data-reveal style={{ ["--i" as string]: 1 }}>
+        <p className="hero__line">{t("line")}</p>
+        <div className="hero__cta">
           <Link href="/work" className="btn">{t("ctaWork")}</Link>
           <button type="button" className="btn btn-quiet" onClick={() => (blip("open"), open("twin"))}>{t("ctaAsk")}</button>
         </div>
 
-        <div className="persona" data-reveal style={{ ["--i" as string]: 2 }}>
+        <div className="persona">
           <p className="text-small muted" id="persona-label">{t("who")}</p>
           <div className="persona__row" role="group" aria-labelledby="persona-label">
             {personas.map((p) => (

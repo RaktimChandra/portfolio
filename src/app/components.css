@@ -354,7 +354,7 @@ html[lang="hi"] .hero__word-inner, html[lang="bn"] .hero__word-inner { font-fami
   .cv-sheet { box-shadow: none; padding: 0; max-width: none; background: #fff; }
   .cv { font-size: 10.6px; gap: 0.55rem; }
   .cv__name { font-size: 2rem; }
-  .skip, .no-print, [data-sonner-toaster] { display: none !important; }
+  .skip, .no-print, .toast { display: none !important; }
 }
 
 /* Brief */
@@ -371,3 +371,7 @@ html[lang="hi"] .hero__word-inner, html[lang="bn"] .hero__word-inner { font-fami
 
 @media (min-width: 900px) { .hero__body { align-self: center; } }
 .mobile-menu .lang { display: inline-flex; margin-top: 1rem; }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); translate: -50% 20px; z-index: 120; padding: 0.7rem 1.1rem; border-radius: 999px; background: var(--ink); color: var(--bg); font-size: var(--step-small); opacity: 0; pointer-events: none; transition: opacity 200ms var(--ease-out), translate 200ms var(--ease-out); }
+.toast[data-on] { opacity: 1; translate: -50% 0; }
+.toast:empty { padding: 0; }
